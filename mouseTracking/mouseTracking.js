@@ -17,11 +17,3 @@ class MouseTracking {
         this.root.appendChild(this.makeSpace());
     }
 }
-
-
-function Main() {
-    const init = new MouseTracking(document.querySelector('#app'));
-    init.render();
-}
-
-Main();
