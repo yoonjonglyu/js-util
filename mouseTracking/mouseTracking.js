@@ -1,6 +1,7 @@
 class MouseTracking {
     constructor(root) {
         this.root = root;
+        this.render();
     }
 
     makeSpace() {
@@ -17,6 +18,8 @@ class MouseTracking {
         const tracker = document.createElement('div');
         tracker.className = "tracker";
         tracker.style.position = "absolute";
+        tracker.style.top = "-100vw";
+        tracker.style.left = "-100vh";
         tracker.style.width = "50px";
         tracker.style.height = "50px";
         tracker.style.backgroundColor = "#165252";
