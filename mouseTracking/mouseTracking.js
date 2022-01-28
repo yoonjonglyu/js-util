@@ -15,7 +15,7 @@ class MouseTracking {
     }
     makeTracker() {
         const tracker = document.createElement('div');
-        tracker.id = "tracker";
+        tracker.className = "tracker";
         tracker.style.position = "absolute";
         tracker.style.width = "50px";
         tracker.style.height = "50px";
