@@ -15,28 +15,41 @@ class MouseTracking {
         return container;
     }
     makeTracker() {
-        const tracker = document.createElement('div');
-        tracker.className = "tracker";
+        const tracker = document.createElement('img');
+        tracker.id = "tracker";
+        tracker.src = "./assets/free-icon-ufo.png";
+        tracker.alt = "ufo";
         tracker.style.position = "absolute";
         tracker.style.top = "-100vw";
-        tracker.style.left = "-100vh";
+        tracker.style.left = "50%";
         tracker.style.width = "50px";
         tracker.style.height = "50px";
-        tracker.style.backgroundColor = "#165252";
-        tracker.style.borderRadius = "100%";
+        tracker.style.transition = "0.2s linear";
 
         return tracker;
+    }
+    makeMarker() {
+        const marker = document.createElement('img');
+        marker.className = "marker";
+        marker.src = "./assets/premium-icon-star.png";
+        marker.alt = "ufo";
+        marker.style.position = "absolute";
+        marker.style.width = "50px";
+        marker.style.height = "50px";
+
+        return marker;
     }
     setTrackingEvent(space, target) {
         space.addEventListener('mousemove', (e) => {
             target.style.top = `${e.clientY - 25}px`;
             target.style.left = `${e.clientX - 25}px`;
         });
+    }
+    setMarkingEvent(space) {
         space.addEventListener('click', (e) => {
-            const marker = this.makeTracker();
+            const marker = this.makeMarker();
             marker.style.top = `${e.clientY - 25}px`;
             marker.style.left = `${e.clientX - 25}px`;
-            marker.style.backgroundColor = "#898994";
             space.appendChild(marker);
         });
     }
@@ -45,6 +58,7 @@ class MouseTracking {
         const space = this.makeSpace();
         const tracker = this.makeTracker();
         this.setTrackingEvent(space, tracker);
+        this.setMarkingEvent(space);
         space.appendChild(tracker);
         this.root.appendChild(space);
     }
