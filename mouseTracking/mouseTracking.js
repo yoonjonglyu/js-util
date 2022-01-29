@@ -32,10 +32,11 @@ class MouseTracking {
         const marker = document.createElement('img');
         marker.className = "marker";
         marker.src = "./assets/premium-icon-star.png";
-        marker.alt = "ufo";
+        marker.alt = "star";
         marker.style.position = "absolute";
         marker.style.width = "50px";
         marker.style.height = "50px";
+        marker.style.animation = "star 0.6s linear";
 
         return marker;
     }
@@ -51,7 +52,26 @@ class MouseTracking {
             marker.style.top = `${e.clientY - 25}px`;
             marker.style.left = `${e.clientX - 25}px`;
             space.appendChild(marker);
+
+            setTimeout(() => {
+                space.removeChild(marker);
+            }, 1100);
         });
+    }
+    setAnimation() {
+        const head = document.querySelector('head');
+        const styleSheets = document.createElement('style');
+        styleSheets.innerText = `
+        @keyframes star {
+            from {
+                transform: scale(0.2) translate(2000%, -1500%);
+            }
+            to {
+                transform: none;
+            }
+          }
+          `;
+        head.appendChild(styleSheets);
     }
 
     render() {
@@ -59,6 +79,7 @@ class MouseTracking {
         const tracker = this.makeTracker();
         this.setTrackingEvent(space, tracker);
         this.setMarkingEvent(space);
+        this.setAnimation();
         space.appendChild(tracker);
         this.root.appendChild(space);
     }
