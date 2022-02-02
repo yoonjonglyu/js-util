@@ -8,6 +8,8 @@ class InfinityScroll {
     makeContainer() {
         const container = document.createElement('article');
         container.id = "container";
+        container.style.display = "flex";
+        container.style.flexFlow = "column";
 
         return container;
     }
@@ -18,20 +20,27 @@ class InfinityScroll {
 
         return pivot;
     }
+    async loading() {
+        this.isLoaded = true;
+        const loading = document.createElement('progress');
+        loading.style.width = "100%";
+
+        this.container.appendChild(loading);
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        this.container.removeChild(loading);
+        this.isLoaded = false;
+    }
     createObserver(pivot) {
-        const observer = new IntersectionObserver(async (entry) => {
-            if (!entry.isIntersecting && !this.isLoaded) {
-                this.isLoaded = true;
+        const onScroll = async ([entry]) => {
+            if (entry.isIntersecting && !this.isLoaded) {
                 observer.unobserve(pivot);
-                console.log('test', entry, observer);
+                await this.loading();
                 this.makeItem();
-                this.isLoaded = false;
                 observer.observe(pivot);
             }
-        }, {
-            root: this.root,
-            rootMargin: "0px",
-            threshold: 0.5,
+        }
+        const observer = new IntersectionObserver(onScroll, {
+            threshold: 1,
         });
         observer.observe(pivot);
     }
@@ -40,11 +49,14 @@ class InfinityScroll {
             .forEach((_, idx) => {
                 const item = document.createElement('div');
                 item.className = "item"
-                item.innerText = idx;
-                item.style.width = "100%";
+                item.innerText = idx + 1;
+                item.style.display = "flex";
+                item.style.flexFlow = "column";
+                item.style.justifyContent = "center";
                 item.style.height = "200px";
-                item.style.margin = "12px";
+                item.style.marginTop = "8px";
                 item.style.textAlign = "center";
+                item.style.fontSize = "2rem";
                 item.style.backgroundColor = "tomato";
 
                 this.container.appendChild(item);
@@ -54,6 +66,7 @@ class InfinityScroll {
     render() {
         const pivot = this.makePivot();
         this.createObserver(pivot);
+        this.makeItem();
         this.root.appendChild(this.container);
         this.root.appendChild(pivot);
     }
