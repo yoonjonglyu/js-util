@@ -78,14 +78,9 @@ class Pagination {
                 }
                 li.innerText = el;
                 li.addEventListener('click', () => {
-                    this.setPage(el);
-                    if (currentPage !== Math.floor(el / 10)) {
-                        this.root.removeChild(nav);
-                        const nextNav = this.makeNav(Math.floor(el / 10));
-                        this.root.appendChild(nextNav);
-                    }
+                    this.setPage(el - 1);
                 });
-                if (Math.floor(this.items.length / 10) > el) ul.appendChild(li);
+                if (Math.floor(this.items.length / 10) >= el) ul.appendChild(li);
             });
 
         if (currentPage + 1 < Math.floor(this.items.length / 100)) {
