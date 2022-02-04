@@ -9,6 +9,7 @@
 1. [MouseTracking](https://yoonjonglyu.github.io/js-util/mouseTracking/) : 마우스 움직임이나 클릭에 반응하는 애니메이션, canvas나 html로 구현.  
    인프런 장애 페이지 보고 영감을 얻었다.
 2. [InfinityScroll](https://yoonjonglyu.github.io/js-util/infinityScroll/) : 자주 쓰이는 스크롤 기법 중 하나로 IntersectionObserver로 구현했다.
+3. [Pagination](https://yoonjonglyu.github.io/js-util/pagination/) : 자주 쓰이는 기법인 페이지네이션 기능을 바닐라로 간단히 구현했다.  
 
 
 ## LICENSE
