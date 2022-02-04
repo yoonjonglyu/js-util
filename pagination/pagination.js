@@ -22,6 +22,7 @@ class Pagination {
     }
     makeNav(currentPage) {
         const nav = document.createElement('nav');
+        nav.id = "paginations";
         const style = {
             display: "flex",
             flexFlow: "column",
@@ -30,21 +31,43 @@ class Pagination {
         for (const [key, value] of Object.entries(style)) {
             nav.style[key] = value;
         }
-        nav.id = "paginations";
+
         const ul = document.createElement('ul');
         const ulStyle = {
             display: "flex",
             justifyContent: "center",
             margin: 0,
             padding: 0,
+            listStyle: "none",
         }
         for (const [key, value] of Object.entries(ulStyle)) {
             ul.style[key] = value;
         }
-        ul.style.listStyle = "none";
+
+        if (currentPage > 0) {
+            const prev = document.createElement('li');
+            prev.className = "prev";
+            const liStyle = {
+                display: "flex",
+                margin: "8px",
+                padding: "8px",
+            }
+            for (const [key, value] of Object.entries(liStyle)) {
+                prev.style[key] = value;
+            }
+            prev.innerText = "prev";
+            prev.addEventListener('click', () => {
+                this.root.removeChild(nav);
+                const nextNav = this.makeNav(currentPage - 1);
+                this.root.appendChild(nextNav);
+            })
+            ul.appendChild(prev);
+        }
+
         Array.from({ length: 10 }, (_, idx) => currentPage * 10 + idx + 1)
             .forEach((el) => {
                 const li = document.createElement('li');
+                li.className = "page";
                 const liStyle = {
                     display: "flex",
                     margin: "8px",
@@ -64,6 +87,27 @@ class Pagination {
                 });
                 if (Math.floor(this.items.length / 10) > el) ul.appendChild(li);
             });
+
+        if (currentPage + 1 < Math.floor(this.items.length / 100)) {
+            const next = document.createElement('li');
+            next.className = "next";
+            const liStyle = {
+                display: "flex",
+                margin: "8px",
+                padding: "8px",
+            }
+            for (const [key, value] of Object.entries(liStyle)) {
+                next.style[key] = value;
+            }
+            next.innerText = "next";
+            next.addEventListener('click', () => {
+                this.root.removeChild(nav);
+                const nextNav = this.makeNav(currentPage + 1);
+                this.root.appendChild(nextNav);
+            })
+            ul.appendChild(next);
+        }
+
         nav.appendChild(ul);
 
         return nav;
