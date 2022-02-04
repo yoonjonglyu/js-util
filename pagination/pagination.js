@@ -80,10 +80,10 @@ class Pagination {
                 li.addEventListener('click', () => {
                     this.setPage(el - 1);
                 });
-                if (Math.floor(this.items.length / 10) >= el) ul.appendChild(li);
+                if (Math.ceil(this.items.length / 10) >= el) ul.appendChild(li);
             });
 
-        if (currentPage + 1 < Math.floor(this.items.length / 100)) {
+        if (currentPage + 1 < Math.ceil(this.items.length / 100)) {
             const next = document.createElement('li');
             next.className = "next";
             const liStyle = {
@@ -122,6 +122,7 @@ class Pagination {
             ul.style[key] = value;
         }
         for (let int = page * 10; int < (page + 1) * 10; int++) {
+            if(!this.items[int]) break;
             const li = document.createElement('li');
             li.className = "page-item";
             li.innerText = this.items[int];
