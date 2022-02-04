@@ -122,7 +122,7 @@ class Pagination {
             ul.style[key] = value;
         }
         for (let int = page * 10; int < (page + 1) * 10; int++) {
-            if(!this.items[int]) break;
+            if(this.items[int] === undefined) break;
             const li = document.createElement('li');
             li.className = "page-item";
             li.innerText = this.items[int];
