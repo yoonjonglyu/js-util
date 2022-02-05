@@ -10,7 +10,7 @@
    인프런 장애 페이지 보고 영감을 얻었다.
 2. [InfinityScroll](https://yoonjonglyu.github.io/js-util/infinityScroll/) : 자주 쓰이는 스크롤 기법 중 하나로 IntersectionObserver로 구현했다.
 3. [Pagination](https://yoonjonglyu.github.io/js-util/pagination/) : 자주 쓰이는 기법인 페이지네이션 기능을 바닐라로 간단히 구현했다.  
-
+4. [StyledInJs](https://yoonjonglyu.github.io/js-util/styledInJs/) : 리액트에서 자주 사용하는 스타일드 컴포넌트를 참고하여서 간단히 만들어본 CSS IN JS 모듈이다.  
 
 ## LICENSE
 - MIT
