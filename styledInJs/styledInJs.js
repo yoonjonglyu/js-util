@@ -4,7 +4,17 @@ class StyledInJs {
             this[tag] = (args) => {
                 const random = (Math.random() * 1000).toString().replace('.', '');
                 const id = `${tag}-${random}`;
-                const css = `.${id} {${args.join('')}}`;
+
+                const styles = args.join('').split('&');
+                const css = styles.reduce((result, current, idx) => { // 선택자 처리
+                    if(idx === 0){
+                        result += `.${id} {${current}}\n`;
+                    } else {
+                        result += `.${id}${current}\n`;
+                    }
+
+                    return result;
+                }, '');
                 this.addStyle(id, css);
 
                 const tagElement = document.createElement(tag);
