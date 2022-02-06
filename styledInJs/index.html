@@ -15,6 +15,14 @@
             위의 조잡한 컴포넌트들의 코드입니다. 스타일드 방식과 거의 유사하죠? 스타일드 컴포넌트 Repo를 참고 해서 간단하게 만들어 봤습니다.
         **/
         const styled = new StyledInJs();
+        styled.createGlobalStyle`
+            button {
+                border: none;
+            }
+            pre {
+                background: tomato;
+            }
+        `;
         const div = styled.div`
             display: block;
             width: 100%;
@@ -25,7 +33,7 @@
             background: red;
         `;
         const button = styled.button`
-            wdith: 100%;
+            width: 300px;
             height: 100%;
             background: cyan;
         `;

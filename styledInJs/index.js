@@ -1,5 +1,13 @@
 function Main() {
     const styled = new StyledInJs();
+    styled.createGlobalStyle`
+        button {
+            border: none;
+        }
+        pre {
+            background: tomato;
+        }
+    `;
     const div = styled.div`
         display: block;
         width: 100%;
@@ -10,7 +18,7 @@ function Main() {
         background: red;
     `;
     const button = styled.button`
-        wdith: 100%;
+        width: 300px;
         height: 100%;
         background: cyan;
     `;

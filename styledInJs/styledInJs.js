@@ -14,6 +14,13 @@ class StyledInJs {
             }
         });
     }
+    createGlobalStyle(args) {
+        const random = (Math.random() * 1000).toString().replace('.', '');
+        const id = `global-${random}`;
+        const css = `${args.join('')}`;
+
+        this.addStyle(id, css);
+    }
     addStyle(id, css) {
         const checkOver = document.querySelector(`#${id}`);
 
