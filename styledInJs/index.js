@@ -23,6 +23,7 @@ function Main() {
     const button = styled.button`
         width: 300px;
         height: 100%;
+        color: ${(props) => props.color || "gray"};
         background: cyan;
         &:hover{
             background: blue;
@@ -31,7 +32,6 @@ function Main() {
     `;
     button.innerText = '스타일드';
     div.appendChild(button);
-
     document.querySelector('#app').appendChild(div);
 }
 
