@@ -136,3 +136,6 @@ const domElements = [
     'text',
     'tspan',
 ];
+loader.define("dom", function () {
+    return domElements;
+});

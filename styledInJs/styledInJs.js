@@ -21,7 +21,7 @@ class StyledInJs {
 
                     const tagElement = document.createElement(tag);
                     tagElement.className = id;
-                    
+
                     return tagElement;
                 }
                 // 컴포넌트 방식이 아니면 불편하기만 하므로 props 기능은 제공하지 않는다..
@@ -47,3 +47,7 @@ class StyledInJs {
         }
     }
 }
+
+loader.define("styledInJs", function () {
+    return new StyledInJs();
+});
