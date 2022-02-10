@@ -1,17 +1,22 @@
 class InfinityScroll {
     constructor(root) {
         this.root = root;
-        this.container = this.makeContainer();
+        this.container = '';
         this.isLoaded = false;
         this.render();
     }
-    makeContainer() {
-        const container = document.createElement('article');
-        container.id = "container";
-        container.style.display = "flex";
-        container.style.flexFlow = "column";
+    async makeContainer() {
+        await loader.require([
+            'styledInJs'
+        ], (styled) => {
+            const container = styled.article`
+            display: flex;
+            flex-flow: column;
+        `;
+            container.id = "container";
 
-        return container;
+            this.container = container;
+        });
     }
     makePivot() {
         const pivot = document.createElement('div');
@@ -22,12 +27,16 @@ class InfinityScroll {
     }
     async loading() {
         this.isLoaded = true;
-        const loading = document.createElement('progress');
-        loading.style.width = "100%";
-
-        this.container.appendChild(loading);
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        this.container.removeChild(loading);
+        await loader.require([
+            'styledInJs'
+        ], async (styled) => {
+            const loading = styled.progress`
+            width: 100%;
+            `;
+            this.container.appendChild(loading);
+            await new Promise((resolve) => setTimeout(resolve, 1300));
+            this.container.removeChild(loading);
+        });
         this.isLoaded = false;
     }
     createObserver(pivot) {
@@ -45,28 +54,37 @@ class InfinityScroll {
         observer.observe(pivot);
     }
     makeItem() {
-        new Array(10).fill(true)
-            .forEach((_, idx) => {
-                const item = document.createElement('div');
-                item.className = "item"
-                item.innerText = idx + 1;
-                item.style.display = "flex";
-                item.style.flexFlow = "column";
-                item.style.justifyContent = "center";
-                item.style.height = "200px";
-                item.style.marginTop = "8px";
-                item.style.textAlign = "center";
-                item.style.fontSize = "2rem";
-                item.style.backgroundColor = "tomato";
+        loader.require([
+            'styledInJs'
+        ], (styled) => {
+            new Array(10).fill(true)
+                .forEach((_, idx) => {
+                    const item = styled.div`
+                        display: flex;
+                        flex-flow: column;
+                        justify-content: center;
+                        height: 200px;
+                        margin-top: 8px;
+                        text-align: center;
+                        font-size: 2rem;
+                        background-color: tomato;
+                        &:active{
+                            background: red;
+                        }
+                    `;
+                    item.classList.add('item');
+                    item.innerText = idx + 1;
 
-                this.container.appendChild(item);
-            });
+                    this.container.appendChild(item);
+                });
+        });
     }
 
-    render() {
+    async render() {
+        await this.makeContainer();
+        this.makeItem();
         const pivot = this.makePivot();
         this.createObserver(pivot);
-        this.makeItem();
         this.root.appendChild(this.container);
         this.root.appendChild(pivot);
     }
