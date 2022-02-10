@@ -9,9 +9,9 @@ class ModuleLoader {
     }
     async require(modules, cb) {
         while (!this.isLoaded) {
-            await new Promise((resolve) => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 7));
         };
-        cb(this._config.module[modules[modules.length - 1]]);
+        await cb(this._config.module[modules[modules.length - 1]]);
     }
     define(name, module) {
         this._config.module[name] = module();
