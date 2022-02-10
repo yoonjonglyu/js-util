@@ -4,7 +4,8 @@ function Main() {
         baseUrl: '../',
         paths: {
             'dom': 'styledInJs/domElements.js',
-            'styledInJs': 'styledInJs/styledInJs.js'
+            'styledInJs': 'styledInJs/styledInJs.js',
+            'infinityScroll': 'infinityScroll/infinityScroll.js'
         }
     });
     loader.require([
@@ -40,7 +41,7 @@ function Main() {
                 color: #fff;
             }
         `;
-        button.innerText = '스타일드';
+        button.innerText = '동일한 모듈 1';
         div.appendChild(button);
         document.querySelector('#app').appendChild(div);
     });
@@ -77,9 +78,14 @@ function Main() {
                 color: #fff;
             }
         `;
-        button.innerText = '스타일드';
+        button.innerText = '동일한 모듈 2';
         div.appendChild(button);
         document.querySelector('#app').appendChild(div);
+    });
+    loader.require([
+        'infinityScroll'
+    ], (infinityScroll) => {
+        const init = new infinityScroll(document.querySelector('#app'));
     });
 
 }

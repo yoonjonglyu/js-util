@@ -89,3 +89,7 @@ class InfinityScroll {
         this.root.appendChild(pivot);
     }
 }
+
+loader.define("infinityScroll", function () {
+    return InfinityScroll;
+});
