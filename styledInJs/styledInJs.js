@@ -1,26 +1,42 @@
 class StyledInJs {
     constructor() {
+        this.cssom = [];
+        this.provideElements();
+    }
+    provideElements() {
         domElements.forEach((tag) => {
             this[tag] = (styleSheets, ...args) => {
-                const random = (Math.random() * 1000).toString().replace('.', '');
-                const id = `${tag}-${random}`;
                 const Components = (props) => {
-                    const cb = args.map((el) => el(props));
-                    const styles = styleSheets.map((el, idx) => cb[idx] ? el + cb[idx] : el).join('').split('&');
+                    const random = (Math.random() * 1000).toString().replace('.', '');
+                    const id = `${tag}-${random}`;
+                    const cb = args.map((el) => typeof el === 'function' ? el(props) : el);
+                    const styles = styleSheets
+                        .map((el, idx) => cb[idx] ? el + cb[idx] : el)
+                        .join('').
+                        split('&');
+                        
+                    const checkOver = this.cssom.find((css) => css.style === styles.join(''));
+                    if (!checkOver) {
+                        const css = styles.reduce((result, current, idx) => { // 선택자 처리
+                            if (idx === 0) {
+                                result += `.${id} {${current}}\n`;
+                            } else {
+                                result += `.${id}${current}\n`;
+                            }
 
-                    const css = styles.reduce((result, current, idx) => { // 선택자 처리
-                        if (idx === 0) {
-                            result += `.${id} {${current}}\n`;
-                        } else {
-                            result += `.${id}${current}\n`;
-                        }
-
-                        return result;
-                    }, '');
-                    this.addStyle(id, css);
+                            return result;
+                        }, '');
+                        this.addStyle(id, css);
+                        this.cssom.push({
+                            id: id,
+                            style: styles.join('')
+                        });
+                    }
 
                     const tagElement = document.createElement(tag);
-                    tagElement.className = id;
+                    tagElement.className = checkOver ?
+                        checkOver.id :
+                        id;
 
                     return tagElement;
                 }
@@ -37,14 +53,11 @@ class StyledInJs {
         this.addStyle(id, css);
     }
     addStyle(id, css) {
-        const checkOver = document.querySelector(`#${id}`);
+        const style = document.createElement('style');
+        style.id = id;
+        style.innerHTML = css;
 
-        if (checkOver === null) {
-            const style = document.createElement('style');
-            style.id = id;
-            style.innerHTML = css;
-            document.querySelector('head').appendChild(style);
-        }
+        document.querySelector('head').appendChild(style);
     }
 }
 
