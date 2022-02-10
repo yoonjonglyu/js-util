@@ -14,19 +14,33 @@ class ModuleLoader {
 
         loader.forEach((script, idx) => {
             if (idx === modules.length - 1) {
-                script.onload = () => {
+                this.onScriptLoad(script.node, () => {
                     cb();
-                    loader.forEach((script) => head.removeChild(script));
-                }
+                    loader.forEach((script) => script.node.parentNode.removeChild(script.node));
+                });
             }
-            head.appendChild(script);
+            head.appendChild(script.node);
         });
     }
-    getScript(id, url, cb) {
-        const sciprt = document.createElement('script');
-        sciprt.id = id;
-        sciprt.src = url;
+    onScriptLoad(node, cb) {
+        return node.addEventListener('load', (e) => {
+            cb();
+            this.removeEvent(e.target, 'load', cb);
+        });
+    }
+    removeEvent(node, event, func) {
+        node.removeEventListener(event, func);
+    }
+    getScript(id, url) {
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+        script.id = id;
+        script.src = url;
 
-        return sciprt;
+        return {
+            id: id,
+            node: script
+        };
     }
 }
