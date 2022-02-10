@@ -1,25 +1,40 @@
 class ModuleLoader {
-    constructor(config) {
-        this.config = config;
+    constructor() {
+        this._config = {
+            baseUrl: '/',
+            paths: {},
+            module: {}
+        };
+        this.isLoaded = false;
     }
-    require(modules, cb) {
+    async require(modules, cb) {
+        while (!this.isLoaded) {
+            await new Promise((resolve) => setTimeout(resolve, 10));
+        };
+        cb(this._config.module[modules[modules.length - 1]]);
+    }
+    define(name, module) {
+        this._config.module[name] = module();
+    }
+    config(config) {
         const head = document.querySelector('head');
+        this._config = {
+            ...this._config,
+            ...config
+        };
+        const modules = Object.keys(config.paths);
+        modules.forEach((moduleName, idx) => {
+            const url = this._config["paths"][moduleName];
+            if (!this.isLoaded) {
+                const script = this.createScript(moduleName, url);
 
-        const loader = modules.map((name, idx) => {
-            const url = this.config["paths"][name];
-            const id = `${name}-${idx}`;
-
-            return this.getScript(id, url);
-        });
-
-        loader.forEach((script, idx) => {
-            if (idx === modules.length - 1) {
                 this.onScriptLoad(script.node, () => {
-                    cb();
-                    loader.forEach((script) => script.node.parentNode.removeChild(script.node));
+                    script.node.parentNode.removeChild(script.node);
+                    if (idx === modules.length - 1) this.isLoaded = true;
                 });
+
+                head.appendChild(script.node);
             }
-            head.appendChild(script.node);
         });
     }
     onScriptLoad(node, cb) {
@@ -31,12 +46,12 @@ class ModuleLoader {
     removeEvent(node, event, func) {
         node.removeEventListener(event, func);
     }
-    getScript(id, url) {
+    createScript(id, url) {
         const script = document.createElement('script');
         script.type = 'text/javascript';
         script.async = true;
         script.id = id;
-        script.src = url;
+        script.src = `${this._config.baseUrl}${url}`;
 
         return {
             id: id,
