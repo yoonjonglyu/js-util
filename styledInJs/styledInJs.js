@@ -14,7 +14,7 @@ class StyledInJs {
                         .map((el, idx) => cb[idx] ? el + cb[idx] : el)
                         .join('').
                         split('&');
-                        
+
                     const checkOver = this.cssom.find((css) => css.style === styles.join(''));
                     if (!checkOver) {
                         const css = styles.reduce((result, current, idx) => { // 선택자 처리
@@ -61,6 +61,6 @@ class StyledInJs {
     }
 }
 
-loader.define("styledInJs", function () {
+loader.define("styledInJs", ["dom"], function () {
     return new StyledInJs();
 });
