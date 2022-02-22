@@ -5,13 +5,24 @@ class ModuleLoader {
             paths: {},
             module: {}
         };
-        this.isLoaded = false;
+        this.isLoaded = {};
     }
     async require(modules, cb) {
-        while (!this.isLoaded) {
-            await new Promise((resolve) => setTimeout(resolve, 7));
+        const importModules = [];
+
+        while (modules.length > 0) {
+            const name = modules.shift();
+
+            while (!this.isLoaded[name]) { // 각 모듈의 로딩까지 기다리기
+                await new Promise((resolve) => setTimeout(resolve, 7));
+            };
+
+            // 로딩 된 모듈 삽입
+            importModules.push(this._config.module[name]);
         };
-        await cb(this._config.module[modules[modules.length - 1]]);
+
+        // 로딩된 모듈 가져와서 cb함수에 args로 넘기기
+        await cb(...importModules);
     }
     define(name, module) {
         this._config.module[name] = module();
@@ -23,14 +34,14 @@ class ModuleLoader {
             ...config
         };
         const modules = Object.keys(config.paths);
-        modules.forEach((moduleName, idx) => {
+        modules.forEach((moduleName) => {
             const url = this._config["paths"][moduleName];
-            if (!this.isLoaded) {
+            if (!this.isLoaded[moduleName]) {
                 const script = this.createScript(moduleName, url);
 
                 this.onScriptLoad(script.node, () => {
                     script.node.parentNode.removeChild(script.node);
-                    if (idx === modules.length - 1) this.isLoaded = true;
+                    this.isLoaded[moduleName] = true;
                 });
 
                 head.appendChild(script.node);
