@@ -24,29 +24,23 @@ class ModuleLoader {
         // 로딩된 모듈 가져와서 cb함수에 args로 넘기기
         await cb(...importModules);
     }
-    define(name, module) {
-        this._config.module[name] = module();
+    define(name, deps, module) { // 의존성 모듈이 없으면 deps가 module이 된다.
+        const context = typeof deps === "function" ?
+            deps :
+            module;
+        if (typeof deps !== 'function') { // 의존성 모듈이 있을시 로드한다.
+            deps.forEach((moduleName) => this.loadScript(moduleName));
+        }
+
+        this._config.module[name] = context();
     }
     config(config) {
-        const head = document.querySelector('head');
         this._config = {
             ...this._config,
             ...config
         };
         const modules = Object.keys(config.paths);
-        modules.forEach((moduleName) => {
-            const url = this._config["paths"][moduleName];
-            if (!this.isLoaded[moduleName]) {
-                const script = this.createScript(moduleName, url);
-
-                this.onScriptLoad(script.node, () => {
-                    script.node.parentNode.removeChild(script.node);
-                    this.isLoaded[moduleName] = true;
-                });
-
-                head.appendChild(script.node);
-            }
-        });
+        modules.forEach((moduleName) => this.loadScript(moduleName));
     }
     onScriptLoad(node, cb) {
         return node.addEventListener('load', (e) => {
@@ -56,6 +50,21 @@ class ModuleLoader {
     }
     removeEvent(node, event, func) {
         node.removeEventListener(event, func);
+    }
+    loadScript(moduleName) {
+        const head = document.querySelector('head');
+        const url = this._config["paths"][moduleName];
+
+        if (!this.isLoaded[moduleName]) {
+            const script = this.createScript(moduleName, url);
+
+            this.onScriptLoad(script.node, () => {
+                script.node.parentNode.removeChild(script.node);
+                this.isLoaded[moduleName] = true;
+            });
+
+            head.appendChild(script.node);
+        }
     }
     createScript(id, url) {
         const script = document.createElement('script');
