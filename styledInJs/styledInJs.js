@@ -1,10 +1,11 @@
 class StyledInJs {
-    constructor() {
+    constructor(domElements) {
         this.cssom = [];
+        this.domElements = domElements;
         this.provideElements();
     }
     provideElements() {
-        domElements.forEach((tag) => {
+        this.domElements.forEach((tag) => {
             this[tag] = (styleSheets, ...args) => {
                 const Components = (props) => {
                     const random = (Math.random() * 1000).toString().replace('.', '');
@@ -61,6 +62,6 @@ class StyledInJs {
     }
 }
 
-loader.define("styledInJs", ["dom"], function () {
-    return new StyledInJs();
+loader.define("styledInJs", ["dom"], function (domElements2) {
+    return new StyledInJs(domElements2);
 });

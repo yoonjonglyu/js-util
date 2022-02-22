@@ -17,13 +17,15 @@ class ModuleLoader {
         const context = typeof deps === "function" ?
             deps :
             module;
+        
+        let importModules = [];
         if (typeof deps !== 'function') { // 의존성 모듈이 있을시 로드한다.
-            await this.waitModules(deps);
+            importModules = await this.waitModules(deps);
         }
 
         // 모듈로드 완료
-        this.isLoaded[name] = true; 
-        this._config.module[name] = context();
+        this.isLoaded[name] = true;
+        this._config.module[name] = context(...importModules);
     }
     config(config) {
         this._config = {

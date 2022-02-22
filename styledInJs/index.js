@@ -1,5 +1,5 @@
 function Main() {
-    const styled = new StyledInJs();
+    const styled = new StyledInJs(domElements);
     styled.createGlobalStyle`
         button {
             border: none;
