@@ -20,15 +20,21 @@ class PromiseYou {
         this.promiseResult = value;
     }
 
-    then(cb) {
+    then(fillBack, rejectBack) {
         if (this.promiseState === this.states[1]) {
-            this.promiseResult = cb(this.promiseResult);
+            const next = new PromiseYou((resolve) => resolve(fillBack));
+            next.promiseResult = fillBack(this.promiseResult);
+
+            return next;
         }
         return this;
     }
-    catch(cb) {
+    catch(rejectBack) {
         if (this.promiseState === this.states[2]) {
-            this.promiseResult = cb(this.promiseResult);
+            const next = new PromiseYou((resolve) => resolve(rejectBack));
+            next.promiseResult = rejectBack(this.promiseResult);
+
+            return next;
         }
         return this;
     }
