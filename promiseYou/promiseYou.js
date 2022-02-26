@@ -8,7 +8,6 @@ class PromiseYou {
         this.promiseState = this.states[0];
         this.promiseResult = '';
         return cb(this.resolve, this.reject);
-
     }
     resolve = (value) => {
         if (this.promiseState !== this.states[0]) return this;
@@ -23,13 +22,13 @@ class PromiseYou {
 
     then(cb) {
         if (this.promiseState === this.states[1]) {
-            cb(this.promiseResult);
+            this.promiseResult = cb(this.promiseResult);
         }
         return this;
     }
     catch(cb) {
         if (this.promiseState === this.states[2]) {
-            cb(this.promiseResult);
+            this.promiseResult = cb(this.promiseResult);
         }
         return this;
     }

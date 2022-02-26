@@ -1,12 +1,20 @@
-function Main () {
+function Main() {
     const promise = new PromiseYou((resolve, reject) => {
-        
-        setTimeout(resolve('asd'), 200);
-        setTimeout(reject('b'), 100);
-    }).then((a) => console.log(a)).catch((b) => console.log(b));
-
+        resolve('test');
+    })
+        .then((a) => {
+            console.log(a);
+            return a + 1;
+        })
+        .catch((b) => console.log(b))
+        .then((a) => console.log(a))
+        .catch((b) => console.log(b));
     console.log(promise);
-    console.log(new Promise((resolve, reject) => {}));
+    const test = new Promise((resolve, reject) => { resolve('test') }).then((a) => {
+        console.log(a);
+        return a;
+    });
+    console.log(test);
 }
 
 Main();
