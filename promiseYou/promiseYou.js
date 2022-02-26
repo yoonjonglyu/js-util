@@ -22,20 +22,20 @@ class PromiseYou {
 
     then(fillBack, rejectBack) {
         if (this.promiseState === this.states[1]) {
-            const next = new PromiseYou((resolve) => resolve(fillBack));
-            next.promiseResult = fillBack(this.promiseResult);
-
-            return next;
+            return this.createNewContext(fillBack(this.promiseResult));
+        }
+        if (this.promiseState === this.states[2] && rejectBack) {
+            return this.createNewContext(rejectBack(this.promiseResult));
         }
         return this;
     }
     catch(rejectBack) {
         if (this.promiseState === this.states[2]) {
-            const next = new PromiseYou((resolve) => resolve(rejectBack));
-            next.promiseResult = rejectBack(this.promiseResult);
-
-            return next;
+            return this.createNewContext(rejectBack(this.promiseResult));
         }
         return this;
+    }
+    createNewContext(result) {
+        return new PromiseYou((resolve) => resolve(result));
     }
 }
