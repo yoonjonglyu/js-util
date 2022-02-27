@@ -7,7 +7,12 @@ class PromiseYou {
         }
         this.promiseState = this.states['<pending>'];
         this.promiseResult = '';
-        return callBack(this.resolve, this.reject);
+
+        try {
+            return callBack(this.resolve, this.reject);
+        } catch (e) {
+            this.reject(e);
+        }
     }
     resolve = (value) => {
         if (this.promiseState !== this.states['<pending>']) return;
@@ -21,24 +26,42 @@ class PromiseYou {
     }
 
     then(fillBack, rejectBack) {
-        if (this.promiseState === this.states['<fulfilled>']) {
-            return this.createNewContext(fillBack(this.promiseResult));
+        try {
+            if (this.promiseState === this.states['<fulfilled>']) {
+                return this.createNewContext(fillBack(this.promiseResult));
+            }
+            if (this.promiseState === this.states['<rejected>'] && rejectBack) {
+                return this.createNewContext(rejectBack(this.promiseResult));
+            }
+        } catch (e) {
+            this.promiseState = this.states['<pending>'];
+            this.reject(e);
         }
-        if (this.promiseState === this.states['<rejected>'] && rejectBack) {
-            return this.createNewContext(rejectBack(this.promiseResult));
-        }
+        
         return this;
     }
     catch(rejectBack) {
-        if (this.promiseState === this.states['<rejected>']) {
-            return this.createNewContext(rejectBack(this.promiseResult));
+        try {
+            if (this.promiseState === this.states['<rejected>']) {
+                return this.createNewContext(rejectBack(this.promiseResult));
+            }
+        } catch (e) {
+            this.promiseState = this.states['<pending>'];
+            this.reject(e);
         }
+
         return this;
     }
     finally(callback) {
-        if (this.promiseState !== this.states['<pending>']) {
-            callback();
+        try {
+            if (this.promiseState !== this.states['<pending>']) {
+                callback();
+            }
+        } catch (e) {
+            this.promiseState = this.states['<pending>'];
+            this.reject(e);
         }
+
         return this;
     }
     createNewContext(result) {

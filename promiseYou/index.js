@@ -1,16 +1,22 @@
+const loader = new ModuleLoader();
 function Main() {
     const promise = new PromiseYou((resolve, reject) => {
-        setTimeout(resolve('testr'), 300);
-        setTimeout(reject('testj'), 200);
+        // setTimeout(resolve('testr'), 300);
+        // setTimeout(reject('testj'), 200);
+        throw 'ss';
     })
-    .finally(() => console.log('ss'));
+        .catch((a) => console.log(a, 55))
+        .finally(() => console.log('final'));
 
     const promise1 = promise
         .then((a) => {
             console.log(a);
+            throw 'sd';
+            setTimeout(console.log('asd'), 100);
             return a + 1;
         }, (a) => console.log(a, 2))
         .catch((b) => console.log(b, "catch"))
+        .then((a) => console.log(a))
         .finally(() => console.log('aa'));
     const promise2 = promise
         .then((a) => {
@@ -25,14 +31,24 @@ function Main() {
             console.log(a);
         })
         .finally(() => console.log('bb'));
-
-    const test = new Promise((resolve, reject) => {
-        // setTimeout(resolve('testPro2'), 100);
-        // setTimeout(reject('testPro'), 500);
-    });
-    const test1 = new Promise((resolve) => resolve('s'));
-    
-        console.log(test, test1, promise, promise1, promise2);
+    const a = new Promise((resolve, reject) => {
+        // setTimeout(resolve('testr'), 300);
+        reject('ss');
+    })
+        a.catch((a) => {
+            console.log(a, 12);
+            return a;
+        })
+        .then((a) => {
+            console.log(a, 12);
+            throw 'bb';
+        })
+        .catch((a) => console.log(a, 12))
+        .finally(() => {
+            throw 'error';
+        })
+        .catch((e) => console.log(e));
+        console.log(a);
 }
 
 Main();
