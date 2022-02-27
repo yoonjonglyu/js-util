@@ -66,6 +66,9 @@ class PromiseYou {
     }
     finally(callback) {
         try {
+            if (this.promiseState === this.states['<pending>']) {
+                this.taskQueue.push((promise) => promise.finally(callback));
+            }
             if (this.promiseState !== this.states['<pending>']) {
                 callback();
             }
