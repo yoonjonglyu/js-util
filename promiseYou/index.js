@@ -48,6 +48,7 @@ function Main() {
 
         button.innerText = 'promise 시작';
         button.addEventListener('click', () => {
+            messageBox.innerText = '';
             console.log('프로미스 스타트');
             const message = styled.p`
             width: 100%;
