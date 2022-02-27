@@ -7,6 +7,7 @@ class PromiseYou {
         }
         this.promiseState = this.states['<pending>'];
         this.promiseResult = '';
+        this.taskQueue = [];
 
         try {
             return callBack(this.resolve, this.reject);
@@ -18,15 +19,23 @@ class PromiseYou {
         if (this.promiseState !== this.states['<pending>']) return;
         this.promiseState = this.states['<fulfilled>'];
         this.promiseResult = value;
+        this.taskQueue.reduce((result, cb) => cb(result), this);
+        this.taskQueue = [];
     }
     reject = (value) => {
         if (this.promiseState !== this.states['<pending>']) return;
         this.promiseState = this.states['<rejected>'];
         this.promiseResult = value;
+        this.taskQueue.reduce((result, cb) => cb(result), this);
+        this.taskQueue = [];
     }
 
     then(fillBack, rejectBack) {
         try {
+            if (this.promiseState === this.states['<pending>']) {
+                this.taskQueue.push((promise) => promise.then(fillBack, rejectBack));
+            }
+
             if (this.promiseState === this.states['<fulfilled>']) {
                 return this.createNewContext(fillBack(this.promiseResult));
             }
@@ -37,11 +46,14 @@ class PromiseYou {
             this.promiseState = this.states['<pending>'];
             this.reject(e);
         }
-        
+
         return this;
     }
     catch(rejectBack) {
         try {
+            if (this.promiseState === this.states['<pending>']) {
+                this.taskQueue.push((promise) => promise.catch(rejectBack));
+            }
             if (this.promiseState === this.states['<rejected>']) {
                 return this.createNewContext(rejectBack(this.promiseResult));
             }
