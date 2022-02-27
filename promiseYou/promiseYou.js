@@ -10,12 +10,12 @@ class PromiseYou {
         return cb(this.resolve, this.reject);
     }
     resolve = (value) => {
-        if (this.promiseState !== this.states[0]) return this;
+        if (this.promiseState !== this.states[0]) return;
         this.promiseState = this.states[1];
         this.promiseResult = value;
     }
     reject = (value) => {
-        if (this.promiseState !== this.states[0]) return this;
+        if (this.promiseState !== this.states[0]) return;
         this.promiseState = this.states[2];
         this.promiseResult = value;
     }
