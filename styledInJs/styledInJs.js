@@ -16,27 +16,20 @@ class StyledInJs {
                         .join('').
                         split('&');
 
-                    const checkOver = this.cssom.find((css) => css.style === styles.join(''));
-                    if (!checkOver) {
-                        const css = styles.reduce((result, current, idx) => { // 선택자 처리
-                            if (idx === 0) {
-                                result += `.${id} {${current}}\n`;
-                            } else {
-                                result += `.${id}${current}\n`;
-                            }
-
-                            return result;
-                        }, '');
+                    const findCss = this.checkOverCss(id, styles);
+                    if (!findCss) {
+                        // 선택자 처리
+                        const css = styles.reduce((result, current, idx) =>
+                            idx === 0 ?
+                                result += `.${id} {${current}}\n` :
+                                result += `.${id}${current}\n`
+                            , '');
                         this.addStyle(id, css);
-                        this.cssom.push({
-                            id: id,
-                            style: styles.join('')
-                        });
                     }
 
                     const tagElement = document.createElement(tag);
-                    tagElement.className = checkOver ?
-                        checkOver.id :
+                    tagElement.className = findCss ?
+                        findCss.id :
                         id;
 
                     return tagElement;
@@ -50,8 +43,23 @@ class StyledInJs {
         const random = (Math.random() * 1000).toString().replace('.', '');
         const id = `global-${random}`;
         const css = `${args.join('')}`;
+        
+        if (!this.checkOverCss(id, args)) {
+            this.addStyle(id, css);
+        }
 
-        this.addStyle(id, css);
+    }
+    checkOverCss(id, styles) { // 아이디를 통해서 식별하는게 더 효율적이긴하다.
+        const checkOver = this.cssom.find((css) => css.style === styles.join(''));
+
+        if (!checkOver) {
+            this.cssom.push({
+                id: id,
+                style: styles.join('')
+            });
+        }
+
+        return checkOver;
     }
     addStyle(id, css) {
         const style = document.createElement('style');
