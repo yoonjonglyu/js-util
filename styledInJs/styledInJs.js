@@ -8,11 +8,10 @@ class StyledInJs {
         this.domElements.forEach((tag) => {
             this[tag] = (styleSheets, ...args) => {
                 const Components = (props) => {
-                    const random = (Math.random() * 1000).toString().replace('.', '');
-                    const id = `${tag}-${random}`;
-                    const cb = args.map((el) => typeof el === 'function' ? el(props) : el);
+                    const id = this.getId(tag);
+                    const callback = args.map((el) => typeof el === 'function' ? el(props) : el);
                     const styles = styleSheets
-                        .map((el, idx) => cb[idx] ? el + cb[idx] : el)
+                        .map((el, idx) => callback[idx] ? el + callback[idx] : el)
                         .join('').
                         split('&');
 
@@ -40,10 +39,9 @@ class StyledInJs {
         });
     }
     createGlobalStyle(args) {
-        const random = (Math.random() * 1000).toString().replace('.', '');
-        const id = `global-${random}`;
+        const id = this.getId('global');
         const css = `${args.join('')}`;
-        
+
         if (!this.checkOverCss(id, args)) {
             this.addStyle(id, css);
         }
@@ -60,6 +58,11 @@ class StyledInJs {
         }
 
         return checkOver;
+    }
+    getId(tag) {
+        const random = (Math.random() * 1000).toString().replace('.', '');
+
+        return `${tag}-${random}`;
     }
     addStyle(id, css) {
         const style = document.createElement('style');
