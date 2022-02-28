@@ -47,7 +47,14 @@ function Main() {
         `;
 
         button.innerText = 'promise 시작';
-        button.addEventListener('click', () => {
+        button.addEventListener('click', promiseEvent);
+
+        container.appendChild(button);
+        container.appendChild(messageBox);
+        document.querySelector('#app').appendChild(container);
+        
+        function promiseEvent() {
+            button.removeEventListener('click', promiseEvent);
             messageBox.innerText = '';
             console.log('프로미스 스타트');
             const message = styled.p`
@@ -106,6 +113,7 @@ function Main() {
                     `;
                     message.innerText = 'finally';
                     messageBox.appendChild(message);
+                    button.addEventListener('click', promiseEvent);
                 })
             const message2 = styled.p`
                 width: 100%;
@@ -114,11 +122,7 @@ function Main() {
                 `;
             message2.innerText = '프로미스 다음 라인';
             messageBox.appendChild(message2);
-        });
-        
-        container.appendChild(button);
-        container.appendChild(messageBox);
-        document.querySelector('#app').appendChild(container);
+        }
     });
 
 }
