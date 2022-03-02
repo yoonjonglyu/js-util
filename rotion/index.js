@@ -6,15 +6,12 @@ function Main() {
         paths: {
             'dom': 'styledInJs/domElements.js',
             'styledInJs': 'styledInJs/styledInJs.js',
-            'infinityScroll': 'infinityScroll/infinityScroll.js'
         }
     });
 
     loader.require([
         'styledInJs'
     ], (styled) => {
-
-
         render(
             document.querySelector('#app'),
             Wrap()
@@ -32,7 +29,22 @@ function Main() {
                 background: #f1f1f1;
             `;
             wrap.id = 'wrap';
+            Notion(wrap);
             return wrap;
+
+            function Notion(root) {
+                const main = styled.main`
+                    display: flex;
+                    width: 1000px;
+                    margin: 80px auto;
+                    background: #ebebeb;
+                `;
+                main.setAttribute('role', 'main');
+                
+                const rotion = new Rotion(main, styled);
+
+                root.appendChild(main);
+            }
         }
     });
 }
