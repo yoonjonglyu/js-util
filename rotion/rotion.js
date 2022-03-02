@@ -23,7 +23,9 @@ class Rotion {
         const pageList = this.styled.ul`
             margin: 0;
             padding: 12px;
-            background: red;
+            &:hover {
+                border-bottom: 1px solid green;
+            }
         `;
         this.renderPageList(pageList);
         container.appendChild(pageList);
@@ -39,7 +41,11 @@ class Rotion {
         this.pages.map((item) => {
             const page = this.styled.li`
                 display: inline-block;
-                background: red;
+                margin-right: 12px;
+                color: #8f8f8f;
+                &:hover {
+                    color: cyan;
+                }
             `;
             page.innerText = item.title;
             list.appendChild(page);
@@ -55,7 +61,20 @@ class Rotion {
     }
     initData() {
         const initState = {
-            pages: ['1', '2', '3'],
+            pages: [
+                {
+                    idx: 1,
+                    title: '기본페이지'
+                },
+                {
+                    idx: 2,
+                    title: 'page1'
+                },
+                {
+                    idx: 3,
+                    title: 'page2'
+                }
+            ],
             views: {}
         };
         localStorage.setItem('rotions', JSON.stringify(initState));
