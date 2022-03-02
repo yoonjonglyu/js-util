@@ -7,16 +7,16 @@ class Rotion {
 
     loadData() {
         const data = localStorage.getItem('rotions');
-        if (data === null) {
-            const initState = {
-                pages: [],
-                views: {}
-            };
-            localStorage.setItem('rotions', JSON.stringify(initState));
-        } else {
-            const { pages, views } = JSON.parse(data);
-            this.pages = pages;
-            this.views = views;
-        }
+        if (data === null) this.initData();
+        const { pages, views } = JSON.parse(data);
+        this.pages = pages;
+        this.views = views;
+    }
+    initData() {
+        const initState = {
+            pages: [],
+            views: {}
+        };
+        localStorage.setItem('rotions', JSON.stringify(initState));
     }
 }
