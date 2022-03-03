@@ -31,6 +31,9 @@ class Rotion {
             }
         `;
         this.pageList = pageList;
+        pageList.addEventListener('click', (e) => {
+            if (e.target.dataset.idx) this.renderContents(e.target.dataset.idx);
+        });
         this.renderPageList();
         this.container.appendChild(pageList);
 
@@ -54,10 +57,7 @@ class Rotion {
                 }
             `;
             page.innerText = item.title;
-            page.addEventListener('click', () => {
-                this.renderContents(item.title);
-            });
-
+            page.setAttribute('data-idx', item.idx);
             this.pageList.appendChild(page);
         });
     }
@@ -97,13 +97,13 @@ class Rotion {
                 }
             ],
             views: {
-                '기본페이지' : [
+                '1': [
                     {
                         type: 'h1',
                         text: '안녕하세요.'
                     }
                 ],
-                'page1' : [
+                '2': [
 
                 ]
             }
