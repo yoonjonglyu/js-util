@@ -17,12 +17,15 @@ class Rotion {
             flex: 1;
         `;
         container.id = "rotion-container";
-
         this.container = container;
         this.createArea();
         this.root.appendChild(container);
     }
     createArea() {
+        this.createPageList();
+        this.createContents();
+    }
+    createPageList() {
         const pageList = this.styled.ul`
             margin: 0;
             padding: 12px;
@@ -36,13 +39,14 @@ class Rotion {
         });
         this.renderPageList();
         this.container.appendChild(pageList);
-
+    }
+    createContents() {
         const contents = this.styled.div`
             height: 100%;
             background: tomato;
         `;
         this.contents = contents;
-        this.renderContents(this.pages[0].title);
+        this.renderContents(this.pages[0].idx);
         this.container.appendChild(contents);
     }
 
