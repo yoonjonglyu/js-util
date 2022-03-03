@@ -5,7 +5,10 @@ class Rotion {
         this.pages = [];
         this.views = {};
         this.loadData();
-        this.container = this.createContainer();
+        this.container = '';
+        this.pageList = '';
+        this.contents = '';
+        this.createContainer();
     }
     createContainer() {
         const container = this.styled.article`
@@ -14,12 +17,12 @@ class Rotion {
             flex: 1;
         `;
         container.id = "rotion-container";
-        this.createArea(container);
-        this.root.appendChild(container);
 
-        return container;
+        this.container = container;
+        this.createArea();
+        this.root.appendChild(container);
     }
-    createArea(container) {
+    createArea() {
         const pageList = this.styled.ul`
             margin: 0;
             padding: 12px;
@@ -27,17 +30,20 @@ class Rotion {
                 border-bottom: 1px solid green;
             }
         `;
-        this.renderPageList(pageList);
-        container.appendChild(pageList);
+        this.pageList = pageList;
+        this.renderPageList();
+        this.container.appendChild(pageList);
 
         const contents = this.styled.div`
             height: 100%;
             background: tomato;
         `;
-        container.appendChild(contents);
+        this.contents = contents;
+        this.renderContents(this.pages[0].title);
+        this.container.appendChild(contents);
     }
 
-    renderPageList(list) {
+    renderPageList() {
         this.pages.map((item) => {
             const page = this.styled.li`
                 display: inline-block;
@@ -48,7 +54,21 @@ class Rotion {
                 }
             `;
             page.innerText = item.title;
-            list.appendChild(page);
+            this.pageList.appendChild(page);
+        });
+    }
+    renderContents(page) {
+        this.views[page]?.map((item) => {
+            const text = this.styled.input`
+                display: block;
+                background: none;
+                border: none;
+                outline: none;
+                ${item.type}
+            `;
+            text.value = item.text;
+            
+            this.contents.appendChild(text);
         });
     }
 
@@ -69,13 +89,19 @@ class Rotion {
                 {
                     idx: 2,
                     title: 'page1'
-                },
-                {
-                    idx: 3,
-                    title: 'page2'
                 }
             ],
-            views: {}
+            views: {
+                '기본페이지' : [
+                    {
+                        type: 'h1',
+                        text: '안녕하세요.'
+                    }
+                ],
+                'page1' : [
+
+                ]
+            }
         };
         localStorage.setItem('rotions', JSON.stringify(initState));
     }
