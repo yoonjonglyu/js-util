@@ -54,10 +54,15 @@ class Rotion {
                 }
             `;
             page.innerText = item.title;
+            page.addEventListener('click', () => {
+                this.renderContents(item.title);
+            });
+
             this.pageList.appendChild(page);
         });
     }
     renderContents(page) {
+        this.contents.innerText = '';
         this.views[page]?.map((item) => {
             const text = this.styled.input`
                 display: block;
@@ -67,7 +72,7 @@ class Rotion {
                 ${item.type}
             `;
             text.value = item.text;
-            
+
             this.contents.appendChild(text);
         });
     }
