@@ -36,6 +36,9 @@ class Rotion {
         this.pageList = pageList;
         pageList.addEventListener('click', (e) => {
             if (e.target.dataset.idx) this.renderContents(e.target.dataset.idx);
+            if (e.target.dataset.add) {
+                this.renderPageList();
+            }
         });
         this.renderPageList();
         this.container.appendChild(pageList);
@@ -51,8 +54,21 @@ class Rotion {
     }
 
     renderPageList() {
+        this.pageList.innerText = '';
         this.pages.map((item) => {
-            const page = this.styled.li`
+            const page = makeItem.call(this);
+            page.innerText = item.title;
+            page.setAttribute('data-idx', item.idx);
+            this.pageList.appendChild(page);
+        });
+        
+        const addPage = makeItem.call(this);
+        addPage.innerText = 'Add Page';
+        addPage.setAttribute('data-add', true);
+        this.pageList.appendChild(addPage);
+
+        function makeItem() {
+            return this.styled.li`
                 display: inline-block;
                 margin-right: 12px;
                 color: #8f8f8f;
@@ -60,10 +76,7 @@ class Rotion {
                     color: cyan;
                 }
             `;
-            page.innerText = item.title;
-            page.setAttribute('data-idx', item.idx);
-            this.pageList.appendChild(page);
-        });
+        }
     }
     renderContents(page) {
         this.contents.innerText = '';
