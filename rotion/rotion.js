@@ -62,6 +62,10 @@ class Rotion {
                 const { idx, page } = e.target.dataset;
                 this.addTextLine(page, parseInt(idx));
                 contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
+            } else {
+                const { idx, page } = e.target.dataset;
+                const state = contents.querySelector(`[data-idx='${idx}']`).value;
+                this.inputText(page, idx, state);
             }
         });
         this.renderContents(this.pages[0].idx);
@@ -144,6 +148,13 @@ class Rotion {
             views: this.views
         });
         this.renderContents(page);
+    }
+    inputText(page, idx, state){
+        this.views[page][idx].text = state;
+        this.saveData({
+            pages: this.pages,
+            views: this.views
+        });
     }
     loadData() {
         const check = localStorage.getItem('rotions');
