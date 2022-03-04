@@ -9,6 +9,10 @@ class Rotion {
         this.pageList = '';
         this.contents = '';
         this.createContainer();
+        this.drag = {
+            page: 0,
+            idx: 0,
+        }
     }
     /**
      * @description 노션을 구성하는 페이지 리스트 & 메모 레이아웃 DOM 구성
@@ -73,7 +77,7 @@ class Rotion {
                 this.addTextLine(page, parseInt(idx));
                 contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
             } else {
-                const state = contents.querySelector(`[data-idx='${idx}']`).value;
+                const state = contents.querySelector(`textarea[data-idx='${idx}']`).value;
                 if (idx === '0') this.changeTitle(parseInt(page), state);
                 if (idx !== '0' && e.key === 'Backspace' && this.views[page][idx].text.length === 0) {
                     this.removeTextLine(page, parseInt(idx));
@@ -90,13 +94,13 @@ class Rotion {
             const { page, idx } = e.target.dataset;
             const cursor = e.target.selectionStart;
             if (e.key === 'ArrowUp' && idx !== '0') {
-                if (cursor === 0) contents.querySelector(`[data-idx='${parseInt(idx) - 1}']`).focus();
+                if (cursor === 0) contents.querySelector(`textarea[data-idx='${parseInt(idx) - 1}']`).focus();
             } else if (e.key === 'ArrowLeft' && idx !== '0') {
-                if (cursor === 0) contents.querySelector(`[data-idx='${parseInt(idx) - 1}']`).focus();
+                if (cursor === 0) contents.querySelector(`textarea[data-idx='${parseInt(idx) - 1}']`).focus();
             } else if (e.key === 'ArrowDown' && this.views[page].length - 1 > parseInt(idx)) {
-                if (cursor === this.views[page][idx].text.length) contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
+                if (cursor === this.views[page][idx].text.length) contents.querySelector(`textarea[data-idx='${parseInt(idx) + 1}']`).focus();
             } else if (e.key === 'ArrowRight' && this.views[page].length - 1 > parseInt(idx)) {
-                if (cursor === this.views[page][idx].text.length) contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
+                if (cursor === this.views[page][idx].text.length) contents.querySelector(`textarea[data-idx='${parseInt(idx) + 1}']`).focus();
             }
         })
         this.renderContents(this.pages[0].idx);
@@ -133,10 +137,33 @@ class Rotion {
     renderContents(page) {
         this.contents.innerText = '';
         this.views[page]?.forEach((item, idx) => {
-            const text = this.styled.textarea`
+            const textBox = this.styled.p`
                 width: 98%;
                 margin-top: 12px;
                 padding: 0 8px;
+                &:hover button {
+                    opacity: 0.8;
+                }
+            `;
+            textBox.draggable = 'true';
+            textBox.setAttribute('data-page', page);
+            textBox.setAttribute('data-idx', idx);
+            textBox.setAttribute('data-drag', true);
+            const handle = this.styled.button`
+                float: left;
+                background: none;
+                border: none;
+                opacity: 0;
+            `;
+            handle.innerText = 'H';
+            handle.setAttribute('data-page', page);
+            handle.setAttribute('data-idx', idx);
+            textBox.appendChild(handle);
+            this.dragTextLine(textBox, handle);
+
+            const text = this.styled.textarea`
+                width: 95%;
+                padding: 0;
                 background: none;
                 border: none;
                 border-bottom: 1px solid #4d4a4a3d;
@@ -150,7 +177,6 @@ class Rotion {
                 &:focus::placeholder{
                     opacity: 1;
                 }
-
             `;
             text.value = item.text;
             text.placeholder = idx === 0 ?
@@ -158,7 +184,35 @@ class Rotion {
                 'Type Memo';
             text.setAttribute('data-page', page);
             text.setAttribute('data-idx', idx);
-            this.contents.appendChild(text);
+            textBox.appendChild(text);
+
+            this.contents.appendChild(textBox);
+        });
+    }
+    dragTextLine(textBox, handle) {
+        textBox.addEventListener("dragstart", (e) => {
+            handle.style.opacity = 0;
+        });
+        textBox.addEventListener("dragend", (e) => {
+            const { page, idx } = e.target.dataset;
+            if (this.drag.page === page && this.drag.idx !== idx) {
+                if (this.drag.idx !== '0' && idx !== '0') this.changeTextLine(page, this.drag.idx, idx);
+            }
+            handle.style.opacity = '';
+        });
+
+        /* 드롭 대상에서 이벤트 발생 */
+        textBox.addEventListener("dragover", (e) => {
+            const { page, idx } = e.target.dataset;
+            this.drag = {
+                page,
+                idx
+            };
+            if (e.target.dataset.drag) e.target.style.borderBottom = "5px solid red";
+        });
+        textBox.addEventListener("dragleave", (e) => {
+            // 요소를 드래그하여 드롭하려던 대상으로부터 벗어났을 때 배경색 리셋
+            if (e.target.dataset.drag) e.target.style.borderBottom = "";
         });
     }
     /**
@@ -234,6 +288,16 @@ class Rotion {
             ...this.views[page].slice(0, idx),
             ...this.views[page].slice(idx + 1, this.views[page].length)
         ];
+        this.saveData({
+            pages: this.pages,
+            views: this.views
+        });
+        this.renderContents(page);
+    }
+    changeTextLine(page, ldx, rdx) {
+        const state = this.views[page][ldx];
+        this.views[page][ldx] = this.views[page][rdx];
+        this.views[page][rdx] = state;
         this.saveData({
             pages: this.pages,
             views: this.views
