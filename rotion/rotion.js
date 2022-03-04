@@ -53,7 +53,6 @@ class Rotion {
     createContents() {
         const contents = this.styled.div`
             height: 100%;
-            background: tomato;
         `;
         this.contents = contents;
         contents.addEventListener('keyup', (e) => {
@@ -104,16 +103,26 @@ class Rotion {
                 display: block;
                 width: 100%;
                 margin-top: 12px;
+                padding: 0;
                 background: none;
                 border: none;
+                border-bottom: 1px solid #4d4a4a3d;
                 outline: none;
                 resize: none;
                 overflow: hidden;
                 font-size: 1rem;
+                &::placeholder {
+                    opacity: 0;
+                }
+                &:hover::placeholder{
+                    opacity: 1;
+                }
                 ${item.type}
             `;
             text.value = item.text;
-            if(idx === 0) text.placeholder = 'Untitled';
+            text.placeholder = idx === 0 ?
+                'Untitled' :
+                'Type ‘/’ for commands';
             text.setAttribute('data-page', page);
             text.setAttribute('data-idx', idx);
             this.contents.appendChild(text);
