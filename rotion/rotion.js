@@ -27,8 +27,15 @@ class Rotion {
     }
     createPageList() {
         const pageList = this.styled.ul`
+            display: flex;
+            width: 1000px;
+            height: 58px;
+            box-sizing: border-box;
             margin: 0;
             padding: 12px;
+            overflow: hidden;
+            overflow-x: auto;
+            white-space:nowrap;
             &:hover {
                 border-bottom: 1px solid green;
             }
@@ -37,6 +44,7 @@ class Rotion {
         pageList.addEventListener('click', (e) => {
             if (e.target.dataset.idx) this.renderContents(e.target.dataset.idx);
             if (e.target.dataset.add) {
+                this.addPage()
                 this.renderPageList();
             }
         });
@@ -61,7 +69,7 @@ class Rotion {
             page.setAttribute('data-idx', item.idx);
             this.pageList.appendChild(page);
         });
-        
+
         const addPage = makeItem.call(this);
         addPage.innerText = 'Add Page';
         addPage.setAttribute('data-add', true);
@@ -94,6 +102,22 @@ class Rotion {
         });
     }
 
+    addPage() {
+        const idx = this.pages[this.pages.length - 1].idx + 1;
+        this.pages = [
+            ...this.pages,
+            {
+                idx: idx,
+                title: 'Untitled'
+            }
+        ]
+        this.views[idx] = [
+            {
+                type: 'title',
+                text: ''
+            },
+        ];
+    }
     loadData() {
         const check = localStorage.getItem('rotions');
         if (check === null) this.initData();
@@ -116,12 +140,19 @@ class Rotion {
             views: {
                 '1': [
                     {
+                        type: 'title',
+                        text: '기본페이지'
+                    },
+                    {
                         type: 'h1',
                         text: '안녕하세요.'
                     }
                 ],
                 '2': [
-
+                    {
+                        type: 'title',
+                        text: 'page1'
+                    },
                 ]
             }
         };
