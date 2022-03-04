@@ -56,6 +56,9 @@ class Rotion {
         `;
         this.contents = contents;
         contents.addEventListener('keyup', (e) => {
+            e.target.style.height = 'auto';
+            e.target.style.height = `${e.target.scrollHeight}px`;
+
             if (e.key === 'Enter') {
                 const { page, idx } = e.target.dataset;
                 this.addTextLine(page, parseInt(idx));
@@ -68,7 +71,7 @@ class Rotion {
                     this.removeTextLine(page, parseInt(idx));
                 } else {
                     this.inputText(page, idx, state);
-                }     
+                }
             }
         });
         this.renderContents(this.pages[0].idx);
@@ -104,7 +107,6 @@ class Rotion {
         this.contents.innerText = '';
         this.views[page]?.forEach((item, idx) => {
             const text = this.styled.textarea`
-                display: block;
                 width: 100%;
                 margin-top: 12px;
                 padding: 0;
