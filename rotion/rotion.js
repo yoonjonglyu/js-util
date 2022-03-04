@@ -100,14 +100,20 @@ class Rotion {
     renderContents(page) {
         this.contents.innerText = '';
         this.views[page]?.forEach((item, idx) => {
-            const text = this.styled.input`
+            const text = this.styled.textarea`
                 display: block;
+                width: 100%;
+                margin-top: 12px;
                 background: none;
                 border: none;
                 outline: none;
+                resize: none;
+                overflow: hidden;
+                font-size: 1rem;
                 ${item.type}
             `;
             text.value = item.text;
+            if(idx === 0) text.placeholder = 'Untitled';
             text.setAttribute('data-page', page);
             text.setAttribute('data-idx', idx);
             this.contents.appendChild(text);
