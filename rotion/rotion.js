@@ -149,6 +149,21 @@ class Rotion {
             textBox.setAttribute('data-page', page);
             textBox.setAttribute('data-idx', idx);
             textBox.setAttribute('data-drag', true);
+            const addLine = this.styled.button`
+                float: left;
+                background: none;
+                border: none;
+                opacity: 0;
+            `;
+            addLine.innerText = 'A';
+            addLine.setAttribute('data-page', page);
+            addLine.setAttribute('data-idx', idx);
+            addLine.addEventListener('click', (e) => {
+                const { page, idx } = e.target.dataset;
+                this.addTextLine(page, parseInt(idx));
+            });
+            textBox.appendChild(addLine);
+
             const handle = this.styled.button`
                 float: left;
                 background: none;
