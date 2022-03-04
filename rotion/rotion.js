@@ -61,6 +61,7 @@ class Rotion {
             if (e.key === "Enter") {
                 const { idx, page } = e.target.dataset;
                 this.addTextLine(page, parseInt(idx));
+                contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
             }
         });
         this.renderContents(this.pages[0].idx);
@@ -69,7 +70,7 @@ class Rotion {
 
     renderPageList() {
         this.pageList.innerText = '';
-        this.pages.map((item) => {
+        this.pages.forEach((item) => {
             const page = makeItem.call(this);
             page.innerText = item.title;
             page.setAttribute('data-idx', item.idx);
@@ -94,7 +95,7 @@ class Rotion {
     }
     renderContents(page) {
         this.contents.innerText = '';
-        this.views[page]?.map((item, idx) => {
+        this.views[page]?.forEach((item, idx) => {
             const text = this.styled.input`
                 display: block;
                 background: none;
