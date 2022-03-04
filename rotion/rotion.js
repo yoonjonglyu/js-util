@@ -44,8 +44,7 @@ class Rotion {
         pageList.addEventListener('click', (e) => {
             if (e.target.dataset.idx) this.renderContents(e.target.dataset.idx);
             if (e.target.dataset.add) {
-                this.addPage()
-                this.renderPageList();
+                this.addPage();
             }
         });
         this.renderPageList();
@@ -65,6 +64,7 @@ class Rotion {
             } else {
                 const { idx, page } = e.target.dataset;
                 const state = contents.querySelector(`[data-idx='${idx}']`).value;
+                if (idx === '0') this.changeTitle(parseInt(page), state);
                 this.inputText(page, idx, state);
             }
         });
@@ -133,6 +133,7 @@ class Rotion {
             pages: this.pages,
             views: this.views
         });
+        this.renderPageList();
     }
     addTextLine(page, idx) {
         this.views[page] = [
@@ -149,12 +150,17 @@ class Rotion {
         });
         this.renderContents(page);
     }
-    inputText(page, idx, state){
+    inputText(page, idx, state) {
         this.views[page][idx].text = state;
         this.saveData({
             pages: this.pages,
             views: this.views
         });
+    }
+    changeTitle(idx, state) {
+        const pageIndex = this.pages.findIndex((page) => page.idx === idx);
+        this.pages[pageIndex].title = state;
+        this.renderPageList();
     }
     loadData() {
         const check = localStorage.getItem('rotions');
