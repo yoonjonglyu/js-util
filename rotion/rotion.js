@@ -57,6 +57,12 @@ class Rotion {
             background: tomato;
         `;
         this.contents = contents;
+        contents.addEventListener('keyup', (e) => {
+            if (e.key === "Enter") {
+                const { idx, page } = e.target.dataset;
+                this.addTextLine(page, parseInt(idx));
+            }
+        });
         this.renderContents(this.pages[0].idx);
         this.container.appendChild(contents);
     }
@@ -88,7 +94,7 @@ class Rotion {
     }
     renderContents(page) {
         this.contents.innerText = '';
-        this.views[page]?.map((item) => {
+        this.views[page]?.map((item, idx) => {
             const text = this.styled.input`
                 display: block;
                 background: none;
@@ -97,7 +103,8 @@ class Rotion {
                 ${item.type}
             `;
             text.value = item.text;
-
+            text.setAttribute('data-page', page);
+            text.setAttribute('data-idx', idx);
             this.contents.appendChild(text);
         });
     }
@@ -121,6 +128,21 @@ class Rotion {
             pages: this.pages,
             views: this.views
         });
+    }
+    addTextLine(page, idx) {
+        this.views[page] = [
+            ...this.views[page].slice(0, idx + 1),
+            {
+                type: 'p',
+                text: '',
+            },
+            ...this.views[page].slice(idx + 1, this.views[page].length)
+        ];
+        this.saveData({
+            pages: this.pages,
+            views: this.views
+        });
+        this.renderContents(page);
     }
     loadData() {
         const check = localStorage.getItem('rotions');
