@@ -69,6 +69,7 @@ class Rotion {
                 if (idx === '0') this.changeTitle(parseInt(page), state);
                 if (idx !== '0' && e.key === 'Backspace' && this.views[page][idx].text.length === 0) {
                     this.removeTextLine(page, parseInt(idx));
+                    contents.querySelector(`[data-idx='${parseInt(idx) - 1}']`).focus();
                 } else {
                     this.inputText(page, idx, state);
                 }
