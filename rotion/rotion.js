@@ -56,15 +56,19 @@ class Rotion {
         `;
         this.contents = contents;
         contents.addEventListener('keyup', (e) => {
-            if (e.key === "Enter") {
-                const { idx, page } = e.target.dataset;
+            if (e.key === 'Enter') {
+                const { page, idx } = e.target.dataset;
                 this.addTextLine(page, parseInt(idx));
                 contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
             } else {
-                const { idx, page } = e.target.dataset;
+                const { page, idx } = e.target.dataset;
                 const state = contents.querySelector(`[data-idx='${idx}']`).value;
                 if (idx === '0') this.changeTitle(parseInt(page), state);
-                this.inputText(page, idx, state);
+                if (idx !== '0' && e.key === 'Backspace' && this.views[page][idx].text.length === 0) {
+                    this.removeTextLine(page, parseInt(idx));
+                } else {
+                    this.inputText(page, idx, state);
+                }     
             }
         });
         this.renderContents(this.pages[0].idx);
@@ -182,6 +186,17 @@ class Rotion {
                 type: 'p',
                 text: '',
             },
+            ...this.views[page].slice(idx + 1, this.views[page].length)
+        ];
+        this.saveData({
+            pages: this.pages,
+            views: this.views
+        });
+        this.renderContents(page);
+    }
+    removeTextLine(page, idx) {
+        this.views[page] = [
+            ...this.views[page].slice(0, idx),
             ...this.views[page].slice(idx + 1, this.views[page].length)
         ];
         this.saveData({
