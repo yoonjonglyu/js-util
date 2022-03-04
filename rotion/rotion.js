@@ -199,7 +199,9 @@ class Rotion {
     }
     changeTitle(idx, state) {
         const pageIndex = this.pages.findIndex((page) => page.idx === idx);
-        this.pages[pageIndex].title = state;
+        this.pages[pageIndex].title = state.length > 0 ?
+            state :
+            'Untitled';
         this.renderPageList();
     }
     loadData() {
