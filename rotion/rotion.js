@@ -117,6 +117,10 @@ class Rotion {
                 text: ''
             },
         ];
+        this.saveData({
+            pages: this.pages,
+            views: this.views
+        });
     }
     loadData() {
         const check = localStorage.getItem('rotions');
@@ -124,6 +128,9 @@ class Rotion {
         const { pages, views } = JSON.parse(localStorage.getItem('rotions'));
         this.pages = pages;
         this.views = views;
+    }
+    saveData(data) {
+        localStorage.setItem('rotions', JSON.stringify(data));
     }
     initData() {
         const initState = {
@@ -156,6 +163,6 @@ class Rotion {
                 ]
             }
         };
-        localStorage.setItem('rotions', JSON.stringify(initState));
+        this.saveData(initState);
     }
 }
