@@ -10,6 +10,9 @@ class Rotion {
         this.contents = '';
         this.createContainer();
     }
+    /**
+     * @description 노션을 구성하는 페이지 리스트 & 메모 레이아웃 DOM 구성
+     */
     createContainer() {
         const container = this.styled.article`
             display: flex;
@@ -41,6 +44,9 @@ class Rotion {
             }
         `;
         this.pageList = pageList;
+        /**
+         * @description 페이지 전환 및 페이지 추가 이벤트
+         */
         pageList.addEventListener('click', (e) => {
             if (e.target.dataset.idx) this.renderContents(e.target.dataset.idx);
             if (e.target.dataset.add) {
@@ -55,16 +61,18 @@ class Rotion {
             height: 100%;
         `;
         this.contents = contents;
+        /**
+         * @description 메모 내용 수정 & 새로운 단락 생성 & 삭제 이벤트
+         */
         contents.addEventListener('keyup', (e) => {
             e.target.style.height = 'auto';
             e.target.style.height = `${e.target.scrollHeight}px`;
 
+            const { page, idx } = e.target.dataset;
             if (e.key === 'Enter') {
-                const { page, idx } = e.target.dataset;
                 this.addTextLine(page, parseInt(idx));
                 contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
             } else {
-                const { page, idx } = e.target.dataset;
                 const state = contents.querySelector(`[data-idx='${idx}']`).value;
                 if (idx === '0') this.changeTitle(parseInt(page), state);
                 if (idx !== '0' && e.key === 'Backspace' && this.views[page][idx].text.length === 0) {
@@ -75,10 +83,28 @@ class Rotion {
                 }
             }
         });
+        /**
+         * @description 같은 페이지내 방향키을 이용한 이동 이벤트
+         */
+        contents.addEventListener('keyup', (e) => {
+            const { page, idx } = e.target.dataset;
+            const cursor = e.target.selectionStart;
+            if (e.key === 'ArrowUp' && idx !== '0') {
+                if (cursor === 0) contents.querySelector(`[data-idx='${parseInt(idx) - 1}']`).focus();
+            } else if (e.key === 'ArrowLeft' && idx !== '0') {
+                if (cursor === 0) contents.querySelector(`[data-idx='${parseInt(idx) - 1}']`).focus();
+            } else if (e.key === 'ArrowDown' && this.views[page].length - 1 > parseInt(idx)) {
+                if (cursor === this.views[page][idx].text.length) contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
+            } else if (e.key === 'ArrowRight' && this.views[page].length - 1 > parseInt(idx)) {
+                if (cursor === this.views[page][idx].text.length) contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
+            }
+        })
         this.renderContents(this.pages[0].idx);
         this.container.appendChild(contents);
     }
-
+    /** 
+     * @description 페이지 목록 & 해당 페이지 메모 렌더링
+     */
     renderPageList() {
         this.pageList.innerText = '';
         this.pages.forEach((item) => {
@@ -108,9 +134,9 @@ class Rotion {
         this.contents.innerText = '';
         this.views[page]?.forEach((item, idx) => {
             const text = this.styled.textarea`
-                width: 100%;
+                width: 98%;
                 margin-top: 12px;
-                padding: 0;
+                padding: 0 8px;
                 background: none;
                 border: none;
                 border-bottom: 1px solid #4d4a4a3d;
@@ -121,7 +147,7 @@ class Rotion {
                 &::placeholder {
                     opacity: 0;
                 }
-                &:hover::placeholder{
+                &:focus::placeholder{
                     opacity: 1;
                 }
 
@@ -135,7 +161,11 @@ class Rotion {
             this.contents.appendChild(text);
         });
     }
-
+    /**
+     * @description 각 라인 타입에 따른 커스텀 스타일
+     * @param {string} type 
+     * @returns string css
+     */
     getTypeStyle(type) {
         const styles = {
             title: `
@@ -160,7 +190,9 @@ class Rotion {
 
         return styles[type];
     }
-
+    /**
+     * @description 노션 데이터 처리 로직
+     */
     addPage() {
         const idx = this.pages[this.pages.length - 1].idx + 1;
         this.pages = [
