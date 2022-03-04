@@ -110,23 +110,48 @@ class Rotion {
                 outline: none;
                 resize: none;
                 overflow: hidden;
-                font-size: 1rem;
+                ${this.getTypeStyle(item.type)}
                 &::placeholder {
                     opacity: 0;
                 }
                 &:hover::placeholder{
                     opacity: 1;
                 }
-                ${item.type}
+
             `;
             text.value = item.text;
             text.placeholder = idx === 0 ?
                 'Untitled' :
-                'Type ‘/’ for commands';
+                'Type Memo';
             text.setAttribute('data-page', page);
             text.setAttribute('data-idx', idx);
             this.contents.appendChild(text);
         });
+    }
+
+    getTypeStyle(type) {
+        const styles = {
+            title: `
+                font-size: 2.5rem;
+                font-weight: bold;
+                &::placeholder {
+                    opacity: 1 !important;
+                }
+            `,
+            h1: `
+                font-size: 1.8rem;
+                font-weight: bold;
+            `,
+            h2: `
+                font-size: 1.5rem;
+                font-weight: bold;
+            `,
+            p: `
+                font-size: 1rem;
+            `,
+        }
+
+        return styles[type];
     }
 
     addPage() {
