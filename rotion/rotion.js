@@ -213,6 +213,10 @@ class Rotion {
             if (this.drag.page === page && this.drag.idx !== idx) {
                 if (this.drag.idx !== '0' && idx !== '0') this.changeTextLine(page, this.drag.idx, idx);
             }
+            this.drag = {
+                page: 0,
+                idx: 0
+            };
             handle.style.opacity = '';
         });
 
