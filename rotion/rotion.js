@@ -13,6 +13,11 @@ class Rotion {
             page: 0,
             idx: 0,
         }
+        this.types = [
+            'h1',
+            'h2',
+            'p'
+        ];
     }
     /**
      * @description 노션을 구성하는 페이지 리스트 & 메모 레이아웃 DOM 구성
@@ -74,14 +79,14 @@ class Rotion {
 
             const { page, idx } = e.target.dataset;
             if (e.key === 'Enter') {
-                this.addTextLine(page, parseInt(idx));
-                contents.querySelector(`[data-idx='${parseInt(idx) + 1}']`).focus();
+                this.addTextLine(page, parseInt(idx), 'p');
+                contents.querySelector(`textarea[data-idx='${parseInt(idx) + 1}']`).focus();
             } else {
                 const state = contents.querySelector(`textarea[data-idx='${idx}']`).value;
                 if (idx === '0') this.changeTitle(parseInt(page), state);
                 if (idx !== '0' && e.key === 'Backspace' && this.views[page][idx].text.length === 0) {
                     this.removeTextLine(page, parseInt(idx));
-                    contents.querySelector(`[data-idx='${parseInt(idx) - 1}']`).focus();
+                    contents.querySelector(`textarea[data-idx='${parseInt(idx) - 1}']`).focus();
                 } else {
                     this.inputText(page, idx, state);
                 }
@@ -138,6 +143,7 @@ class Rotion {
         this.contents.innerText = '';
         this.views[page]?.forEach((item, idx) => {
             const textBox = this.styled.p`
+                position: relative;
                 width: 98%;
                 margin-top: 12px;
                 padding: 0 8px;
@@ -160,7 +166,7 @@ class Rotion {
             addLine.setAttribute('data-idx', idx);
             addLine.addEventListener('click', (e) => {
                 const { page, idx } = e.target.dataset;
-                this.addTextLine(page, parseInt(idx));
+                this.renderAddLineType(textBox, (type) => this.addTextLine(page, parseInt(idx), type));
             });
             textBox.appendChild(addLine);
 
@@ -203,6 +209,33 @@ class Rotion {
 
             this.contents.appendChild(textBox);
         });
+    }
+    renderAddLineType(textBox, addLine) {
+        const typeBox = this.styled.ul`
+            position: absolute;
+            top: 0;
+            margin: 0;
+            padding: 8px;
+            list-style: none;
+            z-index: 999999;
+            background: lightblue;
+        `;
+        typeBox.addEventListener('click', (e) => {
+            const { type } = e.target.dataset;
+            if (type) {
+                addLine(type);
+            }
+        });
+        this.types.forEach((type) => {
+            const item = this.styled.li`
+            `
+            item.innerText = type;
+            item.setAttribute('data-type', type);
+
+            typeBox.appendChild(item);
+        });
+
+        textBox.appendChild(typeBox);
     }
     dragTextLine(textBox, handle) {
         textBox.addEventListener("dragstart", (e) => {
@@ -287,11 +320,11 @@ class Rotion {
         });
         this.renderPageList();
     }
-    addTextLine(page, idx) {
+    addTextLine(page, idx, type) {
         this.views[page] = [
             ...this.views[page].slice(0, idx + 1),
             {
-                type: 'p',
+                type: type,
                 text: '',
             },
             ...this.views[page].slice(idx + 1, this.views[page].length)
