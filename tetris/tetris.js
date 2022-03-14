@@ -22,7 +22,14 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
     }
 }
 class Tetris {
-    constructor() {
-        this.state = new TetrisState();
+    constructor(root) {
+        this.state = new TetrisState(10);
+        this.root = root;
+    }
+
+    createContainer() {
+        const container = document.createElement('main');
+
+        this.root.appendChild(container);
     }
 }
