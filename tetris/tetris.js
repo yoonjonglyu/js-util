@@ -1,7 +1,16 @@
 class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 짜본다.
     constructor(N) {
-        this.board = this.initBoard(N);
+        this._board = this.initBoard(N);
         this.size = N;
+    }
+    get board() {
+        return this._board;
+    }
+    set board(board) {
+        this._board = board;
+    }
+    resetBoard() {
+        this._board = this.initBoard(this.size);
     }
     initBoard(N) {
         return Array.from(
@@ -12,7 +21,6 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
         )
     }
 }
-
 class Tetris {
     constructor() {
         this.state = new TetrisState();
