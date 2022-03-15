@@ -22,14 +22,20 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
     }
 }
 class Tetris {
-    constructor(root) {
+    constructor(root, styled) {
         this.state = new TetrisState(10);
         this.root = root;
+        this.styled = styled;
+        this.createContainer();
     }
 
     createContainer() {
-        const container = document.createElement('main');
+        const container = this.styled.main`
+            width: 80%;
+            margin: 0 auto;
+        `;
 
+        container.appendChild(this.createBoard());
         this.root.appendChild(container);
     }
     /**
@@ -37,8 +43,28 @@ class Tetris {
      * 격자 방식의 board를 만들어 놓고 repaint(각 격자의 color 변경)와 state 조작만을 통해서 게임 진행 사항을 표시해준다.
      */
     createBoard() {
-        const Board = document.createElement('table');
+        const board = this.styled.table`
+            width: 80%;
+            height: 650px;
+        `;
 
-        return Board;
+        const table = this.state.board.map((row) => {
+            const tr = this.styled.tr`
+            `;
+
+            const rows = row.map(() => {
+                const cel = this.styled.td`
+                    border: 1px solid red;
+                `;
+                tr.appendChild(cel);
+
+                return cel;
+            });
+            board.appendChild(tr);
+
+            return rows;
+        });
+
+        return board;
     }
 }
