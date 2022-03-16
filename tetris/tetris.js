@@ -31,6 +31,7 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
 class Tetris {
     constructor(root, styled) {
         this.state = new TetrisState(10);
+        this.blocks = new TetrisBlock();
         this.root = root;
         this.styled = styled;
         this.createContainer();
@@ -82,5 +83,18 @@ class Tetris {
                 this.state.table[rdx][cdx].style.background = col ? 'tomato' : '';
             });
         })
+    }
+}
+class TetrisBlock {
+    constructor() {
+        this.blocks = [
+            [[1, 0, 0], [1, 1, 1], [0, 0, 0]],
+            [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
+            [[0, 0, 1], [1, 1, 1], [0, 0, 0]],
+            [[1, 1], [1, 1]],
+            [[0, 1, 1], [1, 1, 0], [0, 0, 0]],
+            [[0, 1, 0], [1, 1, 1][0, 0, 0]],
+            [[1, 1, 0], [0, 1, 1], [0, 0, 0]]
+        ];
     }
 }
