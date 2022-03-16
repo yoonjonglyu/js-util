@@ -2,7 +2,13 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
     constructor(N) {
         this._board = this.initBoard(N);
         this.size = N;
-        this.table = [];
+        this._nodeTable = [];
+    }
+    get table() {
+        return this._nodeTable;
+    }
+    set table(table) {
+        this._nodeTable = table;
     }
     get board() {
         return this._board;
@@ -50,7 +56,7 @@ class Tetris {
             margin: 40px auto;
         `;
 
-        this.table = this.state.board.map((row) => {
+        this.state.table = this.state.board.map((row) => {
             const tr = this.styled.tr`
             `;
 
@@ -73,7 +79,7 @@ class Tetris {
     randerBoard() {
         this.state.board.forEach((row, rdx) => {
             row.forEach((col, cdx) => {
-                this.table[rdx][cdx].style.background = col ? 'tomato' : '';
+                this.state.table[rdx][cdx].style.background = col ? 'tomato' : '';
             });
         })
     }
