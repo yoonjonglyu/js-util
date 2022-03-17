@@ -56,31 +56,46 @@ class Tetris {
                 this.state.table[rdx][cdx].style.background = col ? 'tomato' : '';
             });
         });
-        setTimeout(this.randerBoard.bind(this), 500);
+        setTimeout(this.randerBoard.bind(this), 100);
     }
 
     inputBlock() {
-        if (this.state.target.length + this.state.xy[1] < 20 && !this.state.board[this.state.target.length + this.state.xy[1]].includes(1)) {
+        const resize = Array.from(this.state.target);
+        while (resize.length > 0 && !resize[resize.length - 1].includes(1)) resize.pop();
+
+        if (resize.length + this.state.xy[1] < 20 && this.checkBoard(resize)) {
             this.state.target.forEach((row, rdx) => {
                 const [x, y] = this.state.xy;
-                row.forEach((col, cdx) => {
-                    if (this.state.board[rdx + y]) {
-                        this.state.board[rdx + y][cdx + x] = 0;
-                    }
-                });
+                if (row.includes(1) && this.state.board[rdx + y]?.includes(1)) {
+                    row.forEach((_, cdx) => {
+                        if (this.state.board[rdx + y]) {
+                            this.state.board[rdx + y][cdx + x] = 0;
+                        }
+                    });
+                }
             });
             this.state.xy[1]++;
             this.state.target.forEach((row, rdx) => {
                 const [x, y] = this.state.xy;
-                row.forEach((col, cdx) => {
-                    if (this.state.board[rdx + y]) {
-                        this.state.board[rdx + y][cdx + x] = col;
-                    }
-                });
+                if (row.includes(1)) {
+                    row.forEach((col, cdx) => {
+                        if (col && this.state.board[rdx + y]) {
+                            this.state.board[rdx + y][cdx + x] = col;
+                        }
+                    });
+                }
             });
         } else {
             this.state.setBlock(this.blocks.getNextBlock());
         }
+    }
+    checkBoard = (arr) => {
+        let result = true;
+        const [x, y] = this.state.xy;
+        arr[arr.length - 1].forEach((col, cdx) => {
+            if (col && this.state.board[y + arr.length][x + cdx]) result = false;
+        });
+        return result;
     }
 }
 class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 짜본다.
