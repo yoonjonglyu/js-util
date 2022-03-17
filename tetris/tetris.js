@@ -82,7 +82,7 @@ class Tetris {
             row.forEach((col, cdx) => {
                 this.state.table[rdx][cdx].style.background = col ? 'tomato' : '';
             });
-        })
+        });
     }
 }
 class TetrisBlock {
@@ -93,8 +93,14 @@ class TetrisBlock {
             [[0, 0, 1], [1, 1, 1], [0, 0, 0]],
             [[1, 1], [1, 1]],
             [[0, 1, 1], [1, 1, 0], [0, 0, 0]],
-            [[0, 1, 0], [1, 1, 1][0, 0, 0]],
+            [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
             [[1, 1, 0], [0, 1, 1], [0, 0, 0]]
         ];
+    }
+    getNextBlock = () => {
+        const type = parseInt(Math.random() * 7);
+        const block = this.blocks[type];
+        
+        return block;
     }
 }
