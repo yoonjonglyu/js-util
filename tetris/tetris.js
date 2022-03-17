@@ -4,7 +4,16 @@ class Tetris {
         this.blocks = new TetrisBlock();
         this.root = root;
         this.styled = styled;
+        this.state.target = this.blocks.getNextBlock();
+        this.state.xy = [3, 0];
+        this.state.target.forEach((row, rdx) => {
+            const [x, y] = this.state.xy;
+            row.forEach((col, cdx) => {
+                this.state.board[rdx + y][cdx + x] = col;
+            });
+        });
         this.createContainer();
+        this.randerBoard();
     }
 
     createContainer() {
@@ -60,6 +69,8 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
         this._board = this.initBoard(N);
         this.size = N;
         this._nodeTable = [];
+        this._target = [];
+        this._xy = [];
     }
     get table() {
         return this._nodeTable;
@@ -72,6 +83,18 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
     }
     set board(board) {
         this._board = board;
+    }
+    get target() {
+        return this._target;
+    }
+    set target(target) {
+        this._target = target;
+    }
+    get xy() {
+        return this._xy;
+    }
+    set xy(xy) {
+        this._xy = xy;
     }
     resetBoard() {
         this._board = this.initBoard(this.size);
@@ -99,8 +122,8 @@ class TetrisBlock {
     }
     getNextBlock = () => {
         const type = parseInt(Math.random() * 7);
-        const block = this.blocks[type];
-        
+        const block = Array.from(this.blocks[type]);
+
         return block;
     }
 }
