@@ -4,14 +4,7 @@ class Tetris {
         this.blocks = new TetrisBlock();
         this.root = root;
         this.styled = styled;
-        this.state.target = this.blocks.getNextBlock();
-        this.state.xy = [3, 0];
-        this.state.target.forEach((row, rdx) => {
-            const [x, y] = this.state.xy;
-            row.forEach((col, cdx) => {
-                this.state.board[rdx + y][cdx + x] = col;
-            });
-        });
+        this.state.setBlock(this.blocks.getNextBlock());
         this.createContainer();
         this.randerBoard();
     }
@@ -57,11 +50,37 @@ class Tetris {
     }
 
     randerBoard() {
+        this.inputBlock();
         this.state.board.forEach((row, rdx) => {
             row.forEach((col, cdx) => {
                 this.state.table[rdx][cdx].style.background = col ? 'tomato' : '';
             });
         });
+        setTimeout(this.randerBoard.bind(this), 500);
+    }
+
+    inputBlock() {
+        if (this.state.target.length + this.state.xy[1] < 20 && !this.state.board[this.state.target.length + this.state.xy[1]].includes(1)) {
+            this.state.target.forEach((row, rdx) => {
+                const [x, y] = this.state.xy;
+                row.forEach((col, cdx) => {
+                    if (this.state.board[rdx + y]) {
+                        this.state.board[rdx + y][cdx + x] = 0;
+                    }
+                });
+            });
+            this.state.xy[1]++;
+            this.state.target.forEach((row, rdx) => {
+                const [x, y] = this.state.xy;
+                row.forEach((col, cdx) => {
+                    if (this.state.board[rdx + y]) {
+                        this.state.board[rdx + y][cdx + x] = col;
+                    }
+                });
+            });
+        } else {
+            this.state.setBlock(this.blocks.getNextBlock());
+        }
     }
 }
 class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 짜본다.
@@ -98,6 +117,10 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
     }
     resetBoard() {
         this._board = this.initBoard(this.size);
+    }
+    setBlock(block) {
+        this.xy = [3, -1];
+        this.target = block;
     }
     initBoard(N) {
         return Array.from(
