@@ -4,9 +4,9 @@ class Tetris {
         this.blocks = new TetrisBlock();
         this.root = root;
         this.styled = styled;
+        this.game = setInterval(this.randerBoard.bind(this), 100);;
         this.state.setBlock(this.blocks.getNextBlock());
         this.createContainer();
-        this.randerBoard();
     }
 
     createContainer() {
@@ -56,7 +56,6 @@ class Tetris {
                 this.state.table[rdx][cdx].style.background = col ? 'tomato' : '';
             });
         });
-        setTimeout(this.randerBoard.bind(this), 100);
     }
 
     inputBlock() {
@@ -86,6 +85,7 @@ class Tetris {
                 }
             });
         } else {
+            if (this.state.xy[1] === -1) return clearInterval(this.game);
             this.state.setBlock(this.blocks.getNextBlock());
         }
     }
