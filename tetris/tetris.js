@@ -86,17 +86,10 @@ class Tetris {
                 this.moveBlock('right');
             }
         });
-    }s
+    } s
     moveBlock(forward) {
         // 흔적 제거
-        this.state.target.forEach((row, rdx) => {
-            const [x, y] = this.state.xy;
-            row.forEach((col, cdx) => {
-                if (col && this.state.board[rdx + y]) {
-                    this.state.board[rdx + y][cdx + x] = 0;
-                }
-            });
-        });
+        this.state.setBoard(true);
         switch (forward) {
             case 'down':
                 this.state.xy[1]++;
@@ -110,16 +103,7 @@ class Tetris {
                 break;
         }
         // 다시 그리기
-        this.state.target.forEach((row, rdx) => {
-            const [x, y] = this.state.xy;
-            if (row.includes(1)) {
-                row.forEach((col, cdx) => {
-                    if (col && this.state.board[rdx + y]) {
-                        this.state.board[rdx + y][cdx + x] = col;
-                    }
-                });
-            }
-        });
+        this.state.setBoard(false);
     }
 }
 class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 짜본다.
@@ -160,6 +144,16 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
     setBlock(block) {
         this.xy = [3, -1];
         this.target = block;
+    }
+    setBoard(isReset) {
+        this.target.forEach((row, rdx) => {
+            const [x, y] = this.xy;
+            row.forEach((col, cdx) => {
+                if (col && this.board[rdx + y] && this.board[rdx + y][cdx + x] !== undefined) {
+                    this.board[rdx + y][cdx + x] = isReset ? 0 : col;
+                }
+            });
+        });
     }
     initBoard(N) {
         return Array.from(
