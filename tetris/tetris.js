@@ -62,40 +62,54 @@ class Tetris {
         const resize = Array.from(this.state.target);
         while (resize.length > 0 && !resize[resize.length - 1].includes(1)) resize.pop();
 
-        if (resize.length + this.state.xy[1] < 20 && this.checkBoard(resize)) {
-            this.state.target.forEach((row, rdx) => {
-                const [x, y] = this.state.xy;
-                if (row.includes(1) && this.state.board[rdx + y]?.includes(1)) {
-                    row.forEach((_, cdx) => {
-                        if (this.state.board[rdx + y]) {
-                            this.state.board[rdx + y][cdx + x] = 0;
-                        }
-                    });
-                }
-            });
-            this.state.xy[1]++;
-            this.state.target.forEach((row, rdx) => {
-                const [x, y] = this.state.xy;
-                if (row.includes(1)) {
-                    row.forEach((col, cdx) => {
-                        if (col && this.state.board[rdx + y]) {
-                            this.state.board[rdx + y][cdx + x] = col;
-                        }
-                    });
-                }
-            });
+        if (resize.length + this.state.xy[1] < 20 && checkBoard.call(this, resize)) {
+            this.moveBlock('down');
         } else {
             if (this.state.xy[1] === -1) return clearInterval(this.game);
             this.state.setBlock(this.blocks.getNextBlock());
         }
+        function checkBoard(arr) {
+            let result = true;
+            const [x, y] = this.state.xy;
+            arr[arr.length - 1].forEach((col, cdx) => {
+                if (col && this.state.board[y + arr.length][x + cdx]) result = false;
+            });
+            return result;
+        }
     }
-    checkBoard = (arr) => {
-        let result = true;
-        const [x, y] = this.state.xy;
-        arr[arr.length - 1].forEach((col, cdx) => {
-            if (col && this.state.board[y + arr.length][x + cdx]) result = false;
+    moveBlock(forward) {
+        // 흔적 제거
+        this.state.target.forEach((row, rdx) => {
+            const [x, y] = this.state.xy;
+            row.forEach((col, cdx) => {
+                if (col && this.state.board[rdx + y]) {
+                    this.state.board[rdx + y][cdx + x] = 0;
+                }
+            });
         });
-        return result;
+        switch (forward) {
+            case 'down':
+                this.state.xy[1]++;
+                break;
+            case 'left':
+                this.state.xy[0]--;
+                break;
+            case 'right':
+                this.state.xy[0]++;
+            default:
+                break;
+        }
+        // 다시 그리기
+        this.state.target.forEach((row, rdx) => {
+            const [x, y] = this.state.xy;
+            if (row.includes(1)) {
+                row.forEach((col, cdx) => {
+                    if (col && this.state.board[rdx + y]) {
+                        this.state.board[rdx + y][cdx + x] = col;
+                    }
+                });
+            }
+        });
     }
 }
 class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 짜본다.
