@@ -81,9 +81,9 @@ class Tetris {
     controlBlock() {
         document.addEventListener('keyup', (e) => {
             if (e.key === 'ArrowLeft') {
-                this.moveBlock('left');
+                if (this.state.xy[0] > 0) this.moveBlock('left');
             } else if (e.key === 'ArrowRight') {
-                this.moveBlock('right');
+                if (this.state.xy[0] + this.state.target[0].length < 10) this.moveBlock('right');
             }
         });
     } s
