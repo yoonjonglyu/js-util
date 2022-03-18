@@ -7,6 +7,7 @@ class Tetris {
         this.game = setInterval(this.randerBoard.bind(this), 100);;
         this.state.setBlock(this.blocks.getNextBlock());
         this.createContainer();
+        this.controlBlock();
     }
 
     createContainer() {
@@ -77,6 +78,15 @@ class Tetris {
             return result;
         }
     }
+    controlBlock() {
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft') {
+                this.moveBlock('left');
+            } else if (e.key === 'ArrowRight') {
+                this.moveBlock('right');
+            }
+        });
+    }s
     moveBlock(forward) {
         // 흔적 제거
         this.state.target.forEach((row, rdx) => {
