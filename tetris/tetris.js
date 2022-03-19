@@ -4,7 +4,7 @@ class Tetris {
         this.blocks = new TetrisBlock();
         this.root = root;
         this.styled = styled;
-        this.game = setInterval(this.inputBlock.bind(this), 900);
+        this.game = setInterval(this.dropBlock.bind(this), 900);
         this.state.setBlock(this.blocks.getNextBlock());
         this.createContainer();
         this.controlBlock();
@@ -88,7 +88,7 @@ class Tetris {
         requestAnimationFrame(this.renderGame);
     }
 
-    inputBlock() {
+    dropBlock() {
         const resize = Array.from(this.state.target);
         while (resize.length > 0 && !resize[resize.length - 1].includes(1)) resize.pop();
 
@@ -112,7 +112,7 @@ class Tetris {
                 if (this.state.xy[0] + this.state.target[0].length < this.state.width) this.moveBlock('right');
             } else if(e.key === 'ArrowDown'){
                 this.state.score++;
-                this.inputBlock();
+                this.dropBlock();
             }
         });
         document.addEventListener('keyup', (e) => {
