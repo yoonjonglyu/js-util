@@ -25,7 +25,7 @@ class Tetris {
     createScoreBoard() {
         const scoreBoard = this.styled.div`
             width: 160px;
-            height: 200px;
+            height: 600px;
             padding: 10px;
             margin-left: 20px;
             border: 1px solid blue;
@@ -36,8 +36,8 @@ class Tetris {
         scoreTitle.innerText = 'SCORE';
         const score = this.styled.h3`
         `;
-        score.innerText = `내 점수 : ${this.state.score} 점`;
         this.state.info = { score: score };
+        this.renderInformation();
 
         const help = this.styled.h4`
             color: tomato;
@@ -46,8 +46,23 @@ class Tetris {
         scoreBoard.appendChild(scoreTitle);
         scoreBoard.appendChild(score);
         scoreBoard.appendChild(help);
+        this.createRanks(scoreBoard);
 
         return scoreBoard;
+    }
+    createRanks(scoreBoard) {
+        const ranksTitle = this.styled.h2``;
+        ranksTitle.innerText = 'RANKS';
+        const ranks = this.styled.ul`
+            padding: 0;
+            list-style: none;
+            text-align: center;
+        `;
+        this.state.info = { ranks: ranks };
+        this.renderRanks();
+
+        scoreBoard.appendChild(ranksTitle);
+        scoreBoard.appendChild(ranks);
     }
     /**
      * @description 테트리스의 판을 매순간 dom 조작하기에는 리플로우가 너무 많이 일어나므로 
@@ -101,9 +116,15 @@ class Tetris {
         cancelAnimationFrame(this.isRender);
         clearInterval(this.game);
         alert('gameover');
+        const isAnswer = prompt('랭킹에 등록 할 닉네임을 입력해주세요.', 'ASD');
+        this.state.ranks = [
+            ...this.state.ranks,
+            [isAnswer, this.state.score]
+        ].sort((a, b) => b[1] - a[1]);
         this.state.resetBoard();
         this.state.resetScore();
         this.controlBlock(false);
+        this.renderRanks();
         this.playGame();
     }
 
@@ -121,6 +142,17 @@ class Tetris {
     }
     renderInformation = () => {
         this.state.info.score.innerText = `내 점수 : ${this.state.score} 점`;
+    }
+    renderRanks = () => {
+        this.state.info.ranks.innerText = '';
+        this.state.ranks.forEach((rank, idx) => {
+            const [name, score] = rank;
+            const item = this.styled.li`
+            `;
+            item.innerText = `[${idx + 1} 등]${name} 님 : ${score} 점`;
+            this.state.info.ranks.appendChild(item);
+        });
+        if (this.state.ranks.length === 0) this.state.info.ranks.innerText = '등록된 랭킹이 없습니다.';
     }
 
     dropBlock() {
@@ -249,9 +281,11 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
         this._size = N;
         this._info = {};
         this._score = 0;
+        this._ranks = [];
         this._nodeTable = [];
         this._target = [];
         this._xy = [];
+        this.loadRanks();
     }
     get info() {
         return this._info;
@@ -261,6 +295,14 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
             ...this._info,
             ...info
         };
+    }
+    get ranks() {
+        return this._ranks;
+    }
+    set ranks(ranks) {
+        if (ranks.length > 5) ranks.pop();
+        this._ranks = ranks;
+        localStorage.setItem('tetris-ranks', JSON.stringify(ranks));
     }
     get score() {
         return this._score;
@@ -325,6 +367,15 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
             },
             () => new Array(N).fill(0)
         )
+    }
+    loadRanks() {
+        const check = localStorage.getItem('tetris-ranks');
+        check === null ?
+            this.initScore() :
+            this.ranks = JSON.parse(localStorage.getItem('tetris-ranks'));
+    }
+    initScore() {
+        localStorage.setItem('tetris-ranks', JSON.stringify([]));
     }
 }
 class TetrisBlock {
