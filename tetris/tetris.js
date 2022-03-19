@@ -8,17 +8,38 @@ class Tetris {
         this.state.setBlock(this.blocks.getNextBlock());
         this.createContainer();
         this.controlBlock();
-        this.randerBoard();
+        this.renderGame();
     }
 
     createContainer() {
         const container = this.styled.main`
-            width: 80%;
-            margin: 0 auto;
+            display: flex;
+            width: 600px;
+            margin: 40px auto;
         `;
 
         container.appendChild(this.createBoard());
+        container.appendChild(this.createScoreBoard());
         this.root.appendChild(container);
+    }
+    createScoreBoard() {
+        const scoreBoard = this.styled.div`
+            width: 180px;
+            height: 200px;
+            margin-left: 20px;
+            border: 1px solid blue;
+            text-align: center;
+        `;
+        const title = this.styled.h2`
+        `;
+        title.innerText = 'SCORE';
+        const score = this.styled.h3`
+        `;
+        this.state.info = { score: score };
+        scoreBoard.appendChild(title);
+        scoreBoard.appendChild(score);
+
+        return scoreBoard;
     }
     /**
      * @description 테트리스의 판을 매순간 dom 조작하기에는 리플로우가 너무 많이 일어나므로 
@@ -28,7 +49,6 @@ class Tetris {
         const board = this.styled.table`
             width: 400px;
             height: 650px;
-            margin: 40px auto;
         `;
 
         this.state.table = this.state.board.map((row) => {
@@ -51,13 +71,21 @@ class Tetris {
         return board;
     }
 
-    randerBoard = () => {
+    renderBoard = () => {
         this.state.board.forEach((row, rdx) => {
             row.forEach((col, cdx) => {
                 this.state.table[rdx][cdx].style.background = col ? 'tomato' : '';
             });
         });
-        requestAnimationFrame(this.randerBoard);
+        
+    }
+    renderInformation = () => {
+        this.state.info.score.innerText = `내 점수 : ${this.state.score} 점`;
+    }
+    renderGame = () => {
+        this.renderBoard();
+        this.renderInformation();
+        requestAnimationFrame(this.renderGame);
     }
 
     inputBlock() {
@@ -117,6 +145,7 @@ class Tetris {
                     count--;
                 }
                 this.state.board[0] = new Array(this.state.width).fill(0);
+                this.state.score += 100;
             }
         }
     }
@@ -155,9 +184,32 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
     constructor(N) {
         this._board = this.initBoard(N);
         this._size = N;
+        this._info = {};
+        this._score = 0;
         this._nodeTable = [];
         this._target = [];
         this._xy = [];
+    }
+    get info() {
+        return this._info;
+    }
+    set info(info) {
+        this._info = {
+            ...this._info,
+            ...info
+        };
+    }
+    get score() {
+        return this._score;
+    }
+    set score(score) {
+        this._score = score;
+    }
+    get width() {
+        return this._size;
+    }
+    get height() {
+        return this._size * 2;
     }
     get table() {
         return this._nodeTable;
@@ -183,11 +235,8 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
     set xy(xy) {
         this._xy = xy;
     }
-    get width() {
-        return this._size;
-    }
-    get height() {
-        return this._size * 2;
+    resetScore() {
+        this._score = 0;
     }
     resetBoard() {
         this._board = this.initBoard(this._size);
