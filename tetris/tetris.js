@@ -5,10 +5,10 @@ class Tetris {
         this.root = root;
         this.styled = styled;
         this.game = 0;
+        this.isRender = 0;
         this.state.setBlock(this.blocks.getNextBlock());
         this.createContainer();
         this.playGame();
-        this.renderGame();
     }
 
     createContainer() {
@@ -24,20 +24,28 @@ class Tetris {
     }
     createScoreBoard() {
         const scoreBoard = this.styled.div`
-            width: 180px;
+            width: 160px;
             height: 200px;
+            padding: 10px;
             margin-left: 20px;
             border: 1px solid blue;
             text-align: center;
         `;
-        const title = this.styled.h2`
+        const scoreTitle = this.styled.h2`
         `;
-        title.innerText = 'SCORE';
+        scoreTitle.innerText = 'SCORE';
         const score = this.styled.h3`
         `;
+        score.innerText = `내 점수 : ${this.state.score} 점`;
         this.state.info = { score: score };
-        scoreBoard.appendChild(title);
+
+        const help = this.styled.h4`
+            color: tomato;
+        `;
+        help.innerText = '게임 시작은 키보드 방향키 아래 화살표로 시작합니다.';
+        scoreBoard.appendChild(scoreTitle);
         scoreBoard.appendChild(score);
+        scoreBoard.appendChild(help);
 
         return scoreBoard;
     }
@@ -77,6 +85,7 @@ class Tetris {
                 if (isAnswer) {
                     document.removeEventListener('keydown', startGame);
                     this.game = setInterval(this.dropBlock.bind(this), 900);
+                    this.renderGame();
                     this.controlBlock(true);
                     alert('묻고 더블로가!');
                 } else {
@@ -89,6 +98,7 @@ class Tetris {
         document.addEventListener('keydown', startGame);
     }
     gameOver() {
+        cancelAnimationFrame(this.isRender);
         clearInterval(this.game);
         alert('gameover');
         this.state.resetBoard();
@@ -100,7 +110,7 @@ class Tetris {
     renderGame = () => {
         this.renderBoard();
         this.renderInformation();
-        requestAnimationFrame(this.renderGame);
+        this.isRender = requestAnimationFrame(this.renderGame);
     }
     renderBoard = () => {
         this.state.board.forEach((row, rdx) => {
