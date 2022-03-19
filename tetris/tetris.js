@@ -110,6 +110,9 @@ class Tetris {
                 if (this.state.xy[0] > 0) this.moveBlock('left');
             } else if (e.key === 'ArrowRight' && this.checkBoard(this.state.target, 'right')) {
                 if (this.state.xy[0] + this.state.target[0].length < this.state.width) this.moveBlock('right');
+            } else if(e.key === 'ArrowDown'){
+                this.state.score++;
+                this.inputBlock();
             }
         });
         document.addEventListener('keyup', (e) => {
