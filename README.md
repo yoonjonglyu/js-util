@@ -15,7 +15,8 @@
 6. [PromiseYou](https://yoonjonglyu.github.io/js-util/promiseYou/) : 프로미스 구현체를 바닐라 js로 간단히 구현 해본 내용이다.
 then, catch, finally 메서드를 간단히 구현했고, 해당 페이지에서는 데모를 확인가능하다.  
 7. [Rotion](https://yoonjonglyu.github.io/js-util/rotion/) : 노션 기능을 간단하게 구현해본 것, 바닐라 js로 라인 추가하는 것이나 드래그로 순서변경하는 것 페이지 추가등 기능을 간단하게 목업해본 것이다. 노션 기능 자체를 만드는데는 그렇게 어렵진 않다. ui/ux적인 측면과 기능의 디테일을 따라가는게 어려울뿐이다.  
-
+8. [Tetris](https://yoonjonglyu.github.io/js-util/tetris/) : 테트리스 기본적인 이동과 회전, 그리고 점수 와 랭킹 정도 간단한 기능만 만들었다. canvas를 사용하지 않고 순수하게 js dom 조작만을 통해서 게임을 만들었는데 만들면서 테트리스에 대해서 알아보니 겉모습과 다르게 상당히 섬세하고 복잡한 게임이라는 점을 느꼈다.  
+ 
   
 ## LICENSE
 - MIT
