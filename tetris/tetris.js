@@ -4,10 +4,11 @@ class Tetris {
         this.blocks = new TetrisBlock();
         this.root = root;
         this.styled = styled;
-        this.game = setInterval(this.randerBoard.bind(this), 100);
+        this.game = setInterval(this.inputBlock.bind(this), 900);
         this.state.setBlock(this.blocks.getNextBlock());
         this.createContainer();
         this.controlBlock();
+        this.randerBoard();
     }
 
     createContainer() {
@@ -50,13 +51,13 @@ class Tetris {
         return board;
     }
 
-    randerBoard() {
-        this.inputBlock();
+    randerBoard = () => {
         this.state.board.forEach((row, rdx) => {
             row.forEach((col, cdx) => {
                 this.state.table[rdx][cdx].style.background = col ? 'tomato' : '';
             });
         });
+        requestAnimationFrame(this.randerBoard);
     }
 
     inputBlock() {
