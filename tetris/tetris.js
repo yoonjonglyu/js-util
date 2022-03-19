@@ -63,13 +63,14 @@ class Tetris {
         const resize = Array.from(this.state.target);
         while (resize.length > 0 && !resize[resize.length - 1].includes(1)) resize.pop();
 
-        if (resize.length + this.state.xy[1] < 20 && this.checkBoard(resize, 'down')) {
+        if (resize.length + this.state.xy[1] < this.state.height && this.checkBoard(resize, 'down')) {
             this.moveBlock('down');
         } else {
             if (this.state.xy[1] === -1) {
                 clearInterval(this.game);
                 alert('gameOver');
             } else {
+                this.checkLine();
                 this.state.setBlock(this.blocks.getNextBlock());
             }
         }
@@ -79,7 +80,7 @@ class Tetris {
             if (e.key === 'ArrowLeft' && this.checkBoard(this.state.target, 'left')) {
                 if (this.state.xy[0] > 0) this.moveBlock('left');
             } else if (e.key === 'ArrowRight' && this.checkBoard(this.state.target, 'right')) {
-                if (this.state.xy[0] + this.state.target[0].length < 10) this.moveBlock('right');
+                if (this.state.xy[0] + this.state.target[0].length < this.state.width) this.moveBlock('right');
             }
         });
         document.addEventListener('keyup', (e) => {
@@ -106,6 +107,18 @@ class Tetris {
         // 다시 그리기
         this.state.setBoard(false);
     }
+    checkLine() {
+        for (let idx = this.state.xy[1] - 4; idx < this.state.xy[1] + 4; idx++) {
+            if (this.state.board[idx] && !this.state.board[idx].includes(0)) {
+                let count = idx;
+                while (count >= 0 && this.state.board[count]) {
+                    this.state.board[count] = this.state.board[count - 1];
+                    count--;
+                }
+                this.state.board[0] = new Array(this.state.width).fill(0);
+            }
+        }
+    }
     checkBoard = (arr, forward) => {
         let result = true;
         const [x, y] = this.state.xy;
@@ -119,7 +132,7 @@ class Tetris {
                             }
                             break;
                         case 'right':
-                            if (cdx + 1 < 10 && !arr[rdx][cdx + 1]) {
+                            if (cdx + 1 < this.state.width && !arr[rdx][cdx + 1]) {
                                 if (col && this.state.board[y + rdx][x + cdx + 1]) result = false;
                             }
                             break;
@@ -140,7 +153,7 @@ class Tetris {
 class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 짜본다.
     constructor(N) {
         this._board = this.initBoard(N);
-        this.size = N;
+        this._size = N;
         this._nodeTable = [];
         this._target = [];
         this._xy = [];
@@ -169,8 +182,14 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
     set xy(xy) {
         this._xy = xy;
     }
+    get width() {
+        return this._size;
+    }
+    get height() {
+        return this._size * 2;
+    }
     resetBoard() {
-        this._board = this.initBoard(this.size);
+        this._board = this.initBoard(this._size);
     }
     setBlock(block) {
         this.xy = [3, -1];
