@@ -70,6 +70,32 @@ class Tetris {
 
         return board;
     }
+    playGame() {
+        const startGame = (e) => {
+            if (e.key === 'ArrowDown') {
+                const isAnswer = confirm('새 게임을 시작하시겠어요?');
+                if (isAnswer) {
+                    document.removeEventListener('keydown', startGame);
+                    this.game = setInterval(this.dropBlock.bind(this), 900);
+                    this.controlBlock(true);
+                    alert('묻고 더블로가!');
+                } else {
+                    alert('너 다음에 한판 더해');
+                    this.state.resetBoard();
+                    this.state.resetScore();
+                }
+            }
+        }
+        document.addEventListener('keydown', startGame);
+    }
+    gameOver() {
+        clearInterval(this.game);
+        alert('gameover');
+        this.state.resetBoard();
+        this.state.resetScore();
+        this.controlBlock(false);
+        this.playGame();
+    }
 
     renderGame = () => {
         this.renderBoard();
@@ -102,32 +128,6 @@ class Tetris {
             }
         }
     }
-    playGame() {
-        const startGame = (e) => {
-            if (e.key === 'ArrowDown') {
-                const isAnswer = confirm('새 게임을 시작하시겠어요?');
-                if (isAnswer) {
-                    document.removeEventListener('keydown', startGame);
-                    this.game = setInterval(this.dropBlock.bind(this), 900);
-                    this.controlBlock(true);
-                    alert('묻고 더블로가!');
-                } else {
-                    alert('너 다음에 한판 더해');
-                    this.state.resetBoard();
-                    this.state.resetScore();
-                }
-            }
-        }
-        document.addEventListener('keydown', startGame);
-    }
-    gameOver() {
-        clearInterval(this.game);
-        alert('gameover');
-        this.state.resetBoard();
-        this.state.resetScore();
-        this.controlBlock(false);
-        this.playGame();
-    }
     controlBlock(handle) {
         if (handle) {
             document.addEventListener('keydown', this.moveEvent);
@@ -139,9 +139,9 @@ class Tetris {
     }
     moveEvent = (e) => {
         if (e.key === 'ArrowLeft' && this.checkBoard(this.state.target, 'left')) {
-            if (this.state.xy[0] > 0) this.moveBlock('left');
+            this.moveBlock('left');
         } else if (e.key === 'ArrowRight' && this.checkBoard(this.state.target, 'right')) {
-            if (this.state.xy[0] + this.state.target[0].length < this.state.width) this.moveBlock('right');
+            this.moveBlock('right');
         } else if (e.key === 'ArrowDown') {
             this.state.score++;
             this.dropBlock();
@@ -149,7 +149,19 @@ class Tetris {
     }
     rotateEvent = (e) => {
         if (e.key === 'ArrowUp') {
-            console.log('rotate');
+            this.state.setBoard(true);
+            const nextTarget = JSON.parse(JSON.stringify(this.state.target));
+            nextTarget.forEach((_, rdx) => {
+                for (let cdx = 0; cdx < rdx; cdx++) {
+                    [nextTarget[cdx][rdx], nextTarget[rdx][cdx]] =
+                        [nextTarget[rdx][cdx], nextTarget[cdx][rdx]];
+                }
+            });
+            if (this.checkBoard(nextTarget, 'rotate')) {
+                this.state.target = nextTarget;
+                this.state.target.forEach((row) => row.reverse());
+            }
+            this.state.setBoard(false);
         }
     }
     moveBlock(forward) {
@@ -191,19 +203,26 @@ class Tetris {
                 row.forEach((col, cdx) => {
                     switch (forward) {
                         case 'down':
+                            if (arr.length + y >= this.state.height) result = false;
                             if (!arr[rdx + 1] || !arr[rdx + 1][cdx]) {
                                 if (col && this.state.board[y + rdx + 1][x + cdx]) result = false;
                             }
                             break;
                         case 'right':
+                            if (col && x + cdx + 1 >= this.state.width) result = false;
                             if (cdx + 1 < this.state.width && !arr[rdx][cdx + 1]) {
                                 if (col && this.state.board[y + rdx][x + cdx + 1]) result = false;
                             }
                             break;
                         case 'left':
+                            if (col && x + cdx - 1 < 0) result = false;
                             if (!arr[rdx][cdx - 1]) {
                                 if (col && this.state.board[y + rdx][x + cdx - 1]) result = false;
                             }
+                            break;
+                        case 'rotate':
+                            if (col && (x + cdx >= this.state.width || x + cdx < 0)) result = false;
+                            if (col && this.state.board[y + rdx][x + cdx]) result = false;
                             break;
                         default:
                             break;
@@ -325,7 +344,7 @@ class TetrisBlock {
     }
     getNextBlock = () => {
         const type = parseInt(Math.random() * 7);
-        const block = Array.from(this.blocks[type]);
+        const block = this.blocks[type];
 
         return block;
     }
