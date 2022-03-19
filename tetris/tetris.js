@@ -4,10 +4,10 @@ class Tetris {
         this.blocks = new TetrisBlock();
         this.root = root;
         this.styled = styled;
-        this.game = setInterval(this.dropBlock.bind(this), 900);
+        this.game = 0;
         this.state.setBlock(this.blocks.getNextBlock());
         this.createContainer();
-        this.controlBlock();
+        this.playGame();
         this.renderGame();
     }
 
@@ -95,30 +95,62 @@ class Tetris {
             this.moveBlock('down');
         } else {
             if (this.state.xy[1] === -1) {
-                clearInterval(this.game);
-                alert('gameOver');
+                this.gameOver();
             } else {
                 this.checkLine();
                 this.state.setBlock(this.blocks.getNextBlock());
             }
         }
     }
-    controlBlock() {
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft' && this.checkBoard(this.state.target, 'left')) {
-                if (this.state.xy[0] > 0) this.moveBlock('left');
-            } else if (e.key === 'ArrowRight' && this.checkBoard(this.state.target, 'right')) {
-                if (this.state.xy[0] + this.state.target[0].length < this.state.width) this.moveBlock('right');
-            } else if (e.key === 'ArrowDown') {
-                this.state.score++;
-                this.dropBlock();
+    playGame() {
+        const startGame = (e) => {
+            if (e.key === 'ArrowDown') {
+                const isAnswer = confirm('새 게임을 시작하시겠어요?');
+                if (isAnswer) {
+                    document.removeEventListener('keydown', startGame);
+                    this.game = setInterval(this.dropBlock.bind(this), 900);
+                    this.controlBlock(true);
+                    alert('묻고 더블로가!');
+                } else {
+                    alert('너 다음에 한판 더해');
+                    this.state.resetBoard();
+                    this.state.resetScore();
+                }
             }
-        });
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'ArrowUp') {
-                console.log('rotate');
-            }
-        })
+        }
+        document.addEventListener('keydown', startGame);
+    }
+    gameOver() {
+        clearInterval(this.game);
+        alert('gameover');
+        this.state.resetBoard();
+        this.state.resetScore();
+        this.controlBlock(false);
+        this.playGame();
+    }
+    controlBlock(handle) {
+        if (handle) {
+            document.addEventListener('keydown', this.moveEvent);
+            document.addEventListener('keyup', this.rotateEvent);
+        } else {
+            document.removeEventListener('keydown', this.moveEvent);
+            document.removeEventListener('keyup', this.rotateEvent);
+        }
+    }
+    moveEvent = (e) => {
+        if (e.key === 'ArrowLeft' && this.checkBoard(this.state.target, 'left')) {
+            if (this.state.xy[0] > 0) this.moveBlock('left');
+        } else if (e.key === 'ArrowRight' && this.checkBoard(this.state.target, 'right')) {
+            if (this.state.xy[0] + this.state.target[0].length < this.state.width) this.moveBlock('right');
+        } else if (e.key === 'ArrowDown') {
+            this.state.score++;
+            this.dropBlock();
+        }
+    }
+    rotateEvent = (e) => {
+        if (e.key === 'ArrowUp') {
+            console.log('rotate');
+        }
     }
     moveBlock(forward) {
         // 흔적 제거
