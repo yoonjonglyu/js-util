@@ -71,26 +71,25 @@ class Tetris {
         return board;
     }
 
-    renderBoard = () => {
-        this.state.board.forEach((row, rdx) => {
-            row.forEach((col, cdx) => {
-                this.state.table[rdx][cdx].style.background = col ? 'tomato' : '';
-            });
-        });
-        
-    }
-    renderInformation = () => {
-        this.state.info.score.innerText = `내 점수 : ${this.state.score} 점`;
-    }
     renderGame = () => {
         this.renderBoard();
         this.renderInformation();
         requestAnimationFrame(this.renderGame);
     }
+    renderBoard = () => {
+        this.state.board.forEach((row, rdx) => {
+            row.forEach((col, cdx) => {
+                this.state.table[rdx][cdx].style.background = this.blocks.getBlockColors(col);
+            });
+        });
+    }
+    renderInformation = () => {
+        this.state.info.score.innerText = `내 점수 : ${this.state.score} 점`;
+    }
 
     dropBlock() {
         const resize = Array.from(this.state.target);
-        while (resize.length > 0 && !resize[resize.length - 1].includes(1)) resize.pop();
+        while (resize.length > 0 && !resize[resize.length - 1].find((col) => col > 0)) resize.pop();
 
         if (resize.length + this.state.xy[1] < this.state.height && this.checkBoard(resize, 'down')) {
             this.moveBlock('down');
@@ -110,7 +109,7 @@ class Tetris {
                 if (this.state.xy[0] > 0) this.moveBlock('left');
             } else if (e.key === 'ArrowRight' && this.checkBoard(this.state.target, 'right')) {
                 if (this.state.xy[0] + this.state.target[0].length < this.state.width) this.moveBlock('right');
-            } else if(e.key === 'ArrowDown'){
+            } else if (e.key === 'ArrowDown') {
                 this.state.score++;
                 this.dropBlock();
             }
@@ -271,13 +270,26 @@ class TetrisBlock {
     constructor() {
         this.blocks = [
             [[1, 0, 0], [1, 1, 1], [0, 0, 0]],
-            [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
-            [[0, 0, 1], [1, 1, 1], [0, 0, 0]],
-            [[1, 1], [1, 1]],
-            [[0, 1, 1], [1, 1, 0], [0, 0, 0]],
-            [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
-            [[1, 1, 0], [0, 1, 1], [0, 0, 0]]
+            [[0, 0, 0, 0], [2, 2, 2, 2], [0, 0, 0, 0], [0, 0, 0, 0]],
+            [[0, 0, 3], [3, 3, 3], [0, 0, 0]],
+            [[4, 4], [4, 4]],
+            [[0, 5, 5], [5, 5, 0], [0, 0, 0]],
+            [[0, 6, 0], [6, 6, 6], [0, 0, 0]],
+            [[7, 7, 0], [0, 7, 7], [0, 0, 0]]
         ];
+        this.colors = [
+            'none',
+            '#0152b5',
+            '#029dd9',
+            '#fb6902',
+            '#fcc900',
+            '#56ad29',
+            '#852587',
+            '#da1e29',
+        ];
+    }
+    getBlockColors = (type) => {
+        return this.colors[type];
     }
     getNextBlock = () => {
         const type = parseInt(Math.random() * 7);
