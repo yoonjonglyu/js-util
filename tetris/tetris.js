@@ -159,6 +159,7 @@ class Tetris {
         if (this.isCrash) {
             if (this.state.xy[1] === -1) {
                 this.gameOver();
+                this.isCrash = false;
             } else {
                 this.checkLine();
                 this.state.setBlock(this.blocks.getNextBlock());
