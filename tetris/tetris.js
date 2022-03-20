@@ -105,8 +105,6 @@ class Tetris {
                     alert('묻고 더블로가!');
                 } else {
                     alert('너 다음에 한판 더해');
-                    this.state.resetBoard();
-                    this.state.resetScore();
                 }
             }
         }
@@ -158,10 +156,11 @@ class Tetris {
     dropBlock() {
         const resize = Array.from(this.state.target);
         while (resize.length > 0 && !resize[resize.length - 1].find((col) => col > 0)) resize.pop();
-
-        if (resize.length + this.state.xy[1] < this.state.height && this.checkBoard(resize, 'down')) {
+        this.state.setBoard(true);
+        if (this.checkBoard(resize, 'down')) {
             this.moveBlock('down');
         } else {
+            this.state.setBoard(false);
             if (this.state.xy[1] === -1) {
                 this.gameOver();
             } else {
@@ -169,6 +168,7 @@ class Tetris {
                 this.state.setBlock(this.blocks.getNextBlock());
             }
         }
+
     }
     controlBlock(handle) {
         if (handle) {
@@ -180,9 +180,9 @@ class Tetris {
         }
     }
     moveEvent = (e) => {
-        if (e.key === 'ArrowLeft' && this.checkBoard(this.state.target, 'left')) {
+        if (e.key === 'ArrowLeft') {
             this.moveBlock('left');
-        } else if (e.key === 'ArrowRight' && this.checkBoard(this.state.target, 'right')) {
+        } else if (e.key === 'ArrowRight') {
             this.moveBlock('right');
         } else if (e.key === 'ArrowDown') {
             this.state.score++;
@@ -190,24 +190,9 @@ class Tetris {
         }
     }
     rotateEvent = (e) => {
-        if (e.key === 'ArrowUp') {
-            this.state.setBoard(true);
-            const nextTarget = JSON.parse(JSON.stringify(this.state.target));
-            nextTarget.forEach((_, rdx) => {
-                for (let cdx = 0; cdx < rdx; cdx++) {
-                    [nextTarget[cdx][rdx], nextTarget[rdx][cdx]] =
-                        [nextTarget[rdx][cdx], nextTarget[cdx][rdx]];
-                }
-            });
-            if (this.checkBoard(nextTarget, 'rotate')) {
-                this.state.target = nextTarget;
-                this.state.target.forEach((row) => row.reverse());
-            }
-            this.state.setBoard(false);
-        }
+        if (e.key === 'ArrowUp') this.moveBlock('rotate');
     }
     moveBlock(forward) {
-        // 흔적 제거
         this.state.setBoard(true);
         switch (forward) {
             case 'down':
@@ -215,13 +200,26 @@ class Tetris {
                 break;
             case 'left':
                 this.state.xy[0]--;
+                if (!this.checkBoard(this.state.target, 'left')) this.state.xy[0]++;
                 break;
             case 'right':
                 this.state.xy[0]++;
+                if (!this.checkBoard(this.state.target, 'right')) this.state.xy[0]--;
+                break;
+            case 'rotate':
+                const nextTarget = JSON.parse(JSON.stringify(this.state.target));
+                nextTarget.forEach((_, rdx) => {
+                    for (let cdx = 0; cdx < rdx; cdx++) {
+                        [nextTarget[cdx][rdx], nextTarget[rdx][cdx]] =
+                            [nextTarget[rdx][cdx], nextTarget[cdx][rdx]];
+                    }
+                });
+                nextTarget.forEach((row) => row.reverse());
+                if (this.checkBoard(nextTarget, 'rotate')) this.state.target = nextTarget;
+                break;
             default:
                 break;
         }
-        // 다시 그리기
         this.state.setBoard(false);
     }
     checkLine() {
@@ -246,29 +244,21 @@ class Tetris {
                     switch (forward) {
                         case 'down':
                             if (arr.length + y >= this.state.height) result = false;
-                            if (!arr[rdx + 1] || !arr[rdx + 1][cdx]) {
-                                if (col && this.state.board[y + rdx + 1][x + cdx]) result = false;
-                            }
+                            if (col && this.state.board[y + rdx + 1] && this.state.board[y + rdx + 1][x + cdx]) result = false;
                             break;
                         case 'right':
-                            if (col && x + cdx + 1 >= this.state.width) result = false;
-                            if (cdx + 1 < this.state.width && !arr[rdx][cdx + 1]) {
-                                if (col && this.state.board[y + rdx][x + cdx + 1]) result = false;
-                            }
+                            if (col && x + cdx >= this.state.width) result = false;
                             break;
                         case 'left':
-                            if (col && x + cdx - 1 < 0) result = false;
-                            if (!arr[rdx][cdx - 1]) {
-                                if (col && this.state.board[y + rdx][x + cdx - 1]) result = false;
-                            }
+                            if (col && x + cdx < 0) result = false;
                             break;
                         case 'rotate':
                             if (col && (x + cdx >= this.state.width || x + cdx < 0)) result = false;
-                            if (col && this.state.board[y + rdx][x + cdx]) result = false;
                             break;
                         default:
                             break;
                     }
+                    if (col && (!this.state.board[y + rdx] || this.state.board[y + rdx][x + cdx])) result = false;
                 });
             }
         });
