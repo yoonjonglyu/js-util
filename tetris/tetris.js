@@ -1,11 +1,12 @@
 class Tetris {
     constructor(root, styled) {
-        this.state = new TetrisState(10);
-        this.blocks = new TetrisBlock();
         this.root = root;
         this.styled = styled;
+        this.state = new TetrisState(10);
+        this.blocks = new TetrisBlock();
         this.game = 0;
         this.isRender = 0;
+        this.isCrash = false;
         this.state.setBlock(this.blocks.getNextBlock());
         this.createContainer();
         this.playGame();
@@ -118,7 +119,7 @@ class Tetris {
         this.state.ranks = [
             ...this.state.ranks,
             [isAnswer, this.state.score]
-        ].sort((a, b) => b[1] - a[1]);
+        ];
         this.state.resetBoard();
         this.state.resetScore();
         this.controlBlock(false);
@@ -154,21 +155,16 @@ class Tetris {
     }
 
     dropBlock() {
-        const resize = Array.from(this.state.target);
-        while (resize.length > 0 && !resize[resize.length - 1].find((col) => col > 0)) resize.pop();
-        this.state.setBoard(true);
-        if (this.checkBoard(resize, 'down')) {
-            this.moveBlock('down');
-        } else {
-            this.state.setBoard(false);
+        this.moveBlock('down');
+        if (this.isCrash) {
             if (this.state.xy[1] === -1) {
                 this.gameOver();
             } else {
                 this.checkLine();
                 this.state.setBlock(this.blocks.getNextBlock());
+                this.isCrash = false;
             }
         }
-
     }
     controlBlock(handle) {
         if (handle) {
@@ -196,15 +192,17 @@ class Tetris {
         this.state.setBoard(true);
         switch (forward) {
             case 'down':
-                this.state.xy[1]++;
+                const resize = Array.from(this.state.target);
+                while (resize.length > 0 && !resize[resize.length - 1].find((col) => col > 0)) resize.pop();
+                this.checkBoard(resize, 'down') ?
+                    this.state.xy[1]++ :
+                    this.isCrash = true;
                 break;
             case 'left':
-                this.state.xy[0]--;
-                if (!this.checkBoard(this.state.target, 'left')) this.state.xy[0]++;
+                if (this.checkBoard(this.state.target, 'left')) this.state.xy[0]--;
                 break;
             case 'right':
-                this.state.xy[0]++;
-                if (!this.checkBoard(this.state.target, 'right')) this.state.xy[0]--;
+                if (this.checkBoard(this.state.target, 'right')) this.state.xy[0]++;
                 break;
             case 'rotate':
                 const nextTarget = JSON.parse(JSON.stringify(this.state.target));
@@ -247,18 +245,20 @@ class Tetris {
                             if (col && this.state.board[y + rdx + 1] && this.state.board[y + rdx + 1][x + cdx]) result = false;
                             break;
                         case 'right':
-                            if (col && x + cdx >= this.state.width) result = false;
+                            if (col && x + cdx >= this.state.width - 1) result = false;
+                            if (col && this.state.board[y + rdx][x + cdx + 1]) result = false;
                             break;
                         case 'left':
-                            if (col && x + cdx < 0) result = false;
+                            if (col && x + cdx < 1) result = false;
+                            if (col && this.state.board[y + rdx][x + cdx - 1]) result = false;
                             break;
                         case 'rotate':
                             if (col && (x + cdx >= this.state.width || x + cdx < 0)) result = false;
+                            if (col && (!this.state.board[y + rdx] || this.state.board[y + rdx][x + cdx])) result = false;
                             break;
                         default:
                             break;
                     }
-                    if (col && (!this.state.board[y + rdx] || this.state.board[y + rdx][x + cdx])) result = false;
                 });
             }
         });
@@ -290,6 +290,7 @@ class TetrisState { // 이번에는 여러 클래스로 나누어서 코드를 �
         return this._ranks;
     }
     set ranks(ranks) {
+        ranks.sort((a, b) => b[1] - a[1]);
         if (ranks.length > 5) ranks.pop();
         this._ranks = ranks;
         localStorage.setItem('tetris-ranks', JSON.stringify(ranks));
