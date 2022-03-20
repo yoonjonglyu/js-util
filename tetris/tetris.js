@@ -238,30 +238,29 @@ class Tetris {
         let result = true;
         const [x, y] = this.state.xy;
         arr.forEach((row, rdx) => {
-            if (y + rdx >= 0) {
-                row.forEach((col, cdx) => {
-                    switch (forward) {
-                        case 'down':
-                            if (arr.length + y >= this.state.height) result = false;
-                            if (col && this.state.board[y + rdx + 1] && this.state.board[y + rdx + 1][x + cdx]) result = false;
-                            break;
-                        case 'right':
-                            if (col && x + cdx >= this.state.width - 1) result = false;
-                            if (col && this.state.board[y + rdx][x + cdx + 1]) result = false;
-                            break;
-                        case 'left':
-                            if (col && x + cdx < 1) result = false;
-                            if (col && this.state.board[y + rdx][x + cdx - 1]) result = false;
-                            break;
-                        case 'rotate':
-                            if (col && (x + cdx >= this.state.width || x + cdx < 0)) result = false;
-                            if (col && (!this.state.board[y + rdx] || this.state.board[y + rdx][x + cdx])) result = false;
-                            break;
-                        default:
-                            break;
-                    }
-                });
-            }
+            if (y + rdx < 0) rdx++;
+            row.forEach((col, cdx) => {
+                switch (forward) {
+                    case 'down':
+                        if (arr.length + y >= this.state.height) result = false;
+                        if (col && this.state.board[y + rdx + 1] && this.state.board[y + rdx + 1][x + cdx]) result = false;
+                        break;
+                    case 'right':
+                        if (col && x + cdx >= this.state.width - 1) result = false;
+                        if (col && this.state.board[y + rdx][x + cdx + 1]) result = false;
+                        break;
+                    case 'left':
+                        if (col && x + cdx < 1) result = false;
+                        if (col && this.state.board[y + rdx][x + cdx - 1]) result = false;
+                        break;
+                    case 'rotate':
+                        if (col && (x + cdx >= this.state.width || x + cdx < 0)) result = false;
+                        if (col && (!this.state.board[y + rdx] || this.state.board[y + rdx][x + cdx])) result = false;
+                        break;
+                    default:
+                        break;
+                }
+            });
         });
         return result;
     }
