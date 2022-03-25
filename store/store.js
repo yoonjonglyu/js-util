@@ -1,15 +1,24 @@
 class Store {
     constructor() {
         this._store = {};
+        this._observe = {};
     }
-    useSelector() {
+    useSelector(key) {
+        return this._store[key];
+    }
+    dispatch(key, state) {
 
     }
-    dispatch() {
-
-    }
-    useState() {
-        
+    useState(initState) {
+        for (const [key, value] of Object.entries(initState)) {
+            Object.defineProperty(this._store, key, {
+                set(value) {
+                    this._store[key] = value;
+                }
+            });
+            this._store[key] = value;
+        }
+        console.log('옵저버를 어떻게 등록할까..?');
         return [this.useSelector, this.dispatch];
     }
     /**
