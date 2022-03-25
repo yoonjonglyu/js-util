@@ -1,6 +1,16 @@
 class Store {
-    constructor(){
+    constructor() {
         this._store = {};
+    }
+    useSelector() {
+
+    }
+    dispatch() {
+
+    }
+    useState() {
+        
+        return [this.useSelector, this.dispatch];
     }
     /**
      * 1. 간단히 selector 와 dispatch를 구현하고
