@@ -7,19 +7,25 @@ class Store {
         return this._store[key];
     }
     dispatch(key, state) {
-
+        this._store[key] = state;
     }
     useState(initState) {
         for (const [key, value] of Object.entries(initState)) {
             Object.defineProperty(this._store, key, {
+                get() {
+                    return this[`_${key}`];
+                },
                 set(value) {
-                    this._store[key] = value;
+                    this[`_${key}`] = value;
                 }
             });
             this._store[key] = value;
+            
+            return [
+                this.useSelector(key),
+                (state) => this.dispatch.call(this, key, state)
+            ];
         }
-        console.log('옵저버를 어떻게 등록할까..?');
-        return [this.useSelector, this.dispatch];
     }
     /**
      * 1. 간단히 selector 와 dispatch를 구현하고
