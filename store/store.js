@@ -2,6 +2,12 @@ class Store {
     constructor() {
         this._store = {};
         this._observe = {};
+        this.currentObserve = null;
+    }
+    watch(callback) {
+        this.currentObserve = callback;
+        callback();
+        this.currentObserve = null; 
     }
     useSelector(key) {
         return this._store[key];
@@ -10,20 +16,27 @@ class Store {
         this._store[key] = state;
     }
     useState(initState) {
+        const that = this;
         for (const [key, value] of Object.entries(initState)) {
-            Object.defineProperty(this._store, key, {
-                get() {
-                    return this[`_${key}`];
-                },
-                set(value) {
-                    this[`_${key}`] = value;
-                }
-            });
-            this._store[key] = value;
-            
+            if (!this._store[key]) { // 첫 생성시 초기화 
+                const _key = `_${key}`;
+                this._store[_key] = value;
+                this._observe[key] = [];
+                Object.defineProperty(this._store, key, {
+                    get() {
+                        if (that.currentObserve) that._observe[key].push(that.currentObserve);
+                        return this[_key];
+                    },
+                    set(value) {
+                        this[_key] = value;
+                        that._observe[key].forEach((callbak) => callbak());
+                    }
+                });
+            } // useState를 통해서 글로벌 상태를 공유한다.
+
             return [
-                this.useSelector(key),
-                (state) => this.dispatch.call(this, key, state)
+                () => this.useSelector(key),
+                (state) => this.dispatch(key, state),
             ];
         }
     }
