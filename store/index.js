@@ -4,19 +4,19 @@ function Main() {
     const Index = document.createElement('div');
     App.appendChild(Index);
     const renderIndex = () => {
-        const [getTest, setTest] = store.useState({ test: 'a' });
-        const [getTest2, setTest2] = store.useState({ test2: 'b' });
-        Index.innerText = `${getTest} : ${getTest2}`;
+        const [Test, setTest] = store.useState({ test: 'a' });
+        const [Test2, setTest2] = store.useState({ test2: 'b' });
+        Index.innerText = `${Test} : ${Test2}`;
         console.log('렌더링 되었다.');
         Index.onclick = () => {
             setTest('sss');
             setTest2(Math.random());
         };
-        const [getTest3, setTest3] = store.useState('test3');
-        console.log(getTest3, setTest3);
     }
-
     store.watch(renderIndex);
+    const [Test3, setTest3] = store.useState('test2');
+    setTest3('외부에서 호출시 watch 이후에 useState를 호출해야한다.');
+    console.log(store);
 
 
     render(document.querySelector('#app'), App);

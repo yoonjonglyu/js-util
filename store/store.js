@@ -10,8 +10,8 @@ class Store {
         callback();
         this.currentObserve = null;
     }
-    useSelector(key) {
-        return this._store[key];
+    useSelector(callback) {
+        return callback(this._store);
     }
     dispatch(action) {
         const { type, payload } = action;
@@ -23,18 +23,15 @@ class Store {
      * 3. state를 selector하거나 dispatch하는 경우에 해당 Node를 구독하게 만드는 로직이 필요할 거 같다.
      */
     useState(initState) {
-        if (typeof initState === 'string' && this._store[initState] !== undefined) {
-            return [
-                this.useSelector(initState),
-                (state) => this.dispatch({ type: initState, payload: state }),
-            ];
-        } else {
-            if (typeof initState === 'string') {
-                console.error('스토어에 등록 되지 않은 상태는 호출 할 수 없습니다.');
-                return [];
-            }
-            for (const [key, value] of Object.entries(initState)) {
-                if (!this._store[key]) {
+        if (typeof initState === 'string' && this._store[initState] === undefined) {
+            return console.error('스토어에 등록 되지 않은 상태는 호출 할 수 없습니다.');
+        }
+
+        let key = initState;
+        if (typeof initState !== 'string') {
+            for (const [__key, value] of Object.entries(initState)) {
+                key = __key;
+                if (!this._store[__key]) {
                     const that = this;
                     const _key = `_${key}`;
                     Object.defineProperty(this._store, key, {
@@ -56,13 +53,13 @@ class Store {
                     this._store[_key] = value;
                     this._observer[key] = [];
                 }
-
-                return [
-                    this.useSelector(key),
-                    (state) => this.dispatch({ type: key, payload: state }),
-                ];
             }
         }
+
+        return [
+            this.useSelector((state) => state[key]),
+            (state) => this.dispatch({ type: key, payload: state }),
+        ];
     }
     publishObserver() {
         while (this._observeTask.length > 0) {
