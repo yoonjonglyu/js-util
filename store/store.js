@@ -1,8 +1,9 @@
 class Store {
     constructor() {
         this._store = {};
-        this._observe = {};
+        this._observer = {};
         this.currentObserve = null;
+        this._observeTask = [];
     }
     watch(callback) {
         this.currentObserve = callback;
@@ -14,7 +15,7 @@ class Store {
     }
     dispatch(action) {
         const { type, payload } = action;
-        setTimeout(() => this._store[type] = payload, 0);
+        this._store[type] = payload;
     }
     /**
      * 1. 간단히 selector 와 dispatch를 구현하고
@@ -38,21 +39,22 @@ class Store {
                     const _key = `_${key}`;
                     Object.defineProperty(this._store, key, {
                         get() {
-                            if (checkAvail()) that._observe[key].push(that.currentObserve);
+                            if (checkObserver()) that._observer[key].push(that.currentObserve);
                             return this[_key];
 
-                            function checkAvail() {
+                            function checkObserver() {
                                 return that.currentObserve &&
-                                    !that._observe[key].filter((prev) => that.checkSameFunction(prev, that.currentObserve)).length > 0;
+                                    !that._observer[key].filter((prev) => that.checkSameFunction(prev, that.currentObserve))[0];
                             }
                         },
                         set(value) {
                             this[_key] = value;
-                            that._observe[key].forEach((callbak) => callbak());
+                            that._observer[key].forEach((callbak) => that._observeTask.push(callbak));
+                            setTimeout(() => that.publishObserver(), 0)
                         }
                     });
                     this._store[_key] = value;
-                    this._observe[key] = [];
+                    this._observer[key] = [];
                 }
 
                 return [
@@ -60,6 +62,13 @@ class Store {
                     (state) => this.dispatch({ type: key, payload: state }),
                 ];
             }
+        }
+    }
+    publishObserver() {
+        while (this._observeTask.length > 0) {
+            const currentTask = this._observeTask.shift();
+            this._observeTask = this._observeTask.filter((nextTask) => !this.checkSameFunction(currentTask, nextTask));
+            currentTask();
         }
     }
     checkSameFunction(a, b) {
