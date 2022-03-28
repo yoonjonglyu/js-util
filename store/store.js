@@ -12,8 +12,9 @@ class Store {
     useSelector(key) {
         return this._store[key];
     }
-    dispatch(key, state) {
-        this._store[key] = state;
+    dispatch(action) {
+        const { name, payload } = action;
+        this._store[name] = payload;
     }
     /**
      * 1. 간단히 selector 와 dispatch를 구현하고
@@ -46,7 +47,7 @@ class Store {
 
             return [
                 () => this.useSelector(key),
-                (state) => this.dispatch(key, state),
+                (state) => this.dispatch({ name: key, payload: state }),
             ];
         }
     }
