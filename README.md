@@ -16,6 +16,7 @@
 then, catch, finally 메서드를 간단히 구현했고, 해당 페이지에서는 데모를 확인가능하다.  
 7. [Rotion](https://yoonjonglyu.github.io/js-util/rotion/) : 노션 기능을 간단하게 구현해본 것, 바닐라 js로 라인 추가하는 것이나 드래그로 순서변경하는 것 페이지 추가등 기능을 간단하게 목업해본 것이다. 노션 기능 자체를 만드는데는 그렇게 어렵진 않다. ui/ux적인 측면과 기능의 디테일을 따라가는게 어려울뿐이다.  
 8. [Tetris](https://yoonjonglyu.github.io/js-util/tetris/) : 테트리스 기본적인 이동과 회전, 그리고 점수 와 랭킹 정도 간단한 기능만 만들었다. canvas를 사용하지 않고 순수하게 js dom 조작만을 통해서 게임을 만들었는데 만들면서 테트리스에 대해서 알아보니 겉모습과 다르게 상당히 섬세하고 복잡한 게임이라는 점을 느꼈다.  
+9. [Store](https://yoonjonglyu.github.io/js-util/store/) : 상태관리 전역 스토어를 간단하게 구현 해본 내용 옵저버 패턴을 참고 해서 구현했다. react 의 useSelector, dispatch, useState 훅 인터페이스를 모방했다. v-dom방식이 아니다보니 watch(구독)을 수동으로 또 중복 실행에 대한 처리를 수동으로 처리해야한다는게 단점. 추후 개선방안이 나오면 수정할 예정이다.  
  
   
 ## LICENSE
