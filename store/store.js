@@ -45,9 +45,11 @@ class Store {
                             }
                         },
                         set(value) {
-                            this[_key] = value;
-                            that._observer[key].forEach((callbak) => that._observeTask.push(callbak));
-                            setTimeout(() => that.publishObserver(), 0)
+                            if (JSON.stringify(value) !== JSON.stringify(this[_key])) {
+                                this[_key] = value;
+                                that._observer[key].forEach((callbak) => that._observeTask.push(callbak));
+                                setTimeout(() => that.publishObserver(), 0);
+                            }
                         }
                     });
                     this._store[_key] = value;
