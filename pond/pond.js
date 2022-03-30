@@ -1,0 +1,7 @@
+class Pond {
+
+}
+
+class Canvas {
+
+}
