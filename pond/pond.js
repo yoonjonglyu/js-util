@@ -25,4 +25,9 @@ class Canvas {
     this._canvas = canvas;
     this._ctx = canvas.getContext('2d');
   }
+
+  fillRect(color, xy, size) {
+    this._ctx.fillStyle = color;
+    this._ctx.fillRect(...xy, ...size);
+  }
 }
