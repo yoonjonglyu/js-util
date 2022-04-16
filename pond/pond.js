@@ -30,4 +30,7 @@ class Canvas {
     this._ctx.fillStyle = color;
     this._ctx.fillRect(...xy, ...size);
   }
+  clearRect(xy, size) {
+    this._ctx.clearRect(...xy, ...size);
+  }
 }
