@@ -33,4 +33,8 @@ class Canvas {
   clearRect(xy, size) {
     this._ctx.clearRect(...xy, ...size);
   }
+  strokeRect(color, xy, size) {
+    this._ctx.strokeStyle = color;
+    this._ctx.strokeRect(...xy, ...size);
+  }
 }
