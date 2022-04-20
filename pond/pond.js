@@ -37,4 +37,13 @@ class Canvas {
     this._ctx.strokeStyle = color;
     this._ctx.strokeRect(...xy, ...size);
   }
+  fillText(text, xy, maxWidth) {
+    this._ctx.fillText(text, ...xy, maxWidth);
+  }
+  strokeText(text, xy, maxWidth) {
+    this._ctx.strokeText(text, ...xy, maxWidth);
+  }
+  measureText(text){
+    return this._ctx.measureText(text);
+  }
 }
