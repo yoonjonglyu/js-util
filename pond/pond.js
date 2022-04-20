@@ -43,7 +43,10 @@ class Canvas {
   strokeText(text, xy, maxWidth) {
     this._ctx.strokeText(text, ...xy, maxWidth);
   }
-  measureText(text){
+  measureText(text) {
     return this._ctx.measureText(text);
+  }
+  drawImage(image, sxy, ssize, dxy, dsize) {
+    this._ctx.drawImage(image, ...sxy, ...ssize, ...dxy, ...dsize);
   }
 }
