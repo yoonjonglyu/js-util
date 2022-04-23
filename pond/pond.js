@@ -8,12 +8,23 @@ class Pond {
   constructor(root) {
     this._root = root;
     this.canvas = new Canvas(this.createCanvas());
+    this.renderPond();
   }
   createCanvas() {
     const canvas = document.createElement('canvas');
+    canvas.width = '1000';
+    canvas.height = '1000';
     this._root.appendChild(canvas);
 
     return canvas;
+  }
+  renderPond() {
+    const image = new Image();
+    image.addEventListener('load', async () => {
+      const img = await createImageBitmap(image, 0, 0, 4000, 2560);
+      this.canvas.drawImage(img, [0, 0], [1000, 1000]);
+    });
+    image.src = 'pngwing.com.png';
   }
 }
 
@@ -47,6 +58,11 @@ class Canvas {
     return this._ctx.measureText(text);
   }
   drawImage(image, sxy, ssize, dxy, dsize) {
-    this._ctx.drawImage(image, ...sxy, ...ssize, ...dxy, ...dsize);
+    const state = [];
+    if (sxy) state.push(...sxy);
+    if (ssize) state.push(...ssize);
+    if (dxy) state.push(...dxy);
+    if (dsize) state.push(...dsize);
+    this._ctx.drawImage(image, ...state);
   }
 }
