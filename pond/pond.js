@@ -12,8 +12,11 @@ class Pond {
   }
   createCanvas() {
     const canvas = document.createElement('canvas');
-    canvas.width = '1000';
-    canvas.height = '1000';
+    canvas.width = '800';
+    canvas.height = '800';
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    canvas.style.border = '1px solid';
     this._root.appendChild(canvas);
 
     return canvas;
@@ -22,7 +25,7 @@ class Pond {
     const image = new Image();
     image.addEventListener('load', async () => {
       const img = await createImageBitmap(image, 0, 0, 4000, 2560);
-      this.canvas.drawImage(img, [0, 0], [1000, 1000]);
+      this.canvas.drawImage(img, [0, 0], [800, 800]);
     });
     image.src = 'pngwing.com.png';
   }
