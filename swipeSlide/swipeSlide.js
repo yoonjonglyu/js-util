@@ -1,20 +1,35 @@
-function Swipe() {
+function Swipe(Container, itemLength) {
   let isSwipe = false;
   let initOffset = 0;
   let currentStep = 0;
   let currentOffset = 0;
+
   const handleStart = (x) => {
     isSwipe = true;
     initOffset = x;
   };
   const handleMove = (x) => {
     if (isSwipe) {
-      const offset = initOffset - x;
-      console.log(x, offset);
+      const offset = initOffset - x - currentOffset;
+      Container.style.transition = 'none';
+      Container.style.transform = `translateX(${offset}px)`;
     }
   };
   const handleEnd = (x) => {
     if (isSwipe) {
+      const offset = initOffset - x;
+      if (Math.abs(offset) >= 360 / 2) {
+        if (offset > 0 && currentStep > 0) {
+          currentStep--;
+          currentOffset = currentStep * 360;
+        } else if (offset < 0 && currentStep < itemLength - 1) {
+          currentStep++;
+          currentOffset = currentStep * 360;
+        }
+      }
+      Container.style.transition = '400ms';
+      Container.style.transform = `translateX(-${currentOffset}px)`;
+      isSwipe = false;
     }
   };
   return {
@@ -24,15 +39,17 @@ function Swipe() {
     desktopMove: (e) => {
       handleMove(e.pageX);
     },
-    desktopEnd: (e) => {},
+    desktopEnd: (e) => {
+      handleEnd(e.pageX);
+    },
     mobileStart: (e) => {
-      handleStart(e.pageX);
+      handleStart(e.touches[0].pageX);
     },
     mobileMove: (e) => {
-      handleMove(e.pagex);
+      handleMove(e.targetTouches[0].pageX);
     },
     mobileEnd: (e) => {
-      handleEnd(e.pagex);
+      handleEnd(e.changedTouches[0].pageX);
     },
   };
 }
@@ -66,6 +83,8 @@ function SlideComponent() {
     Node.innerText = text;
     setStyle(Node, {
       width: '360px',
+      height: '300px',
+      border: 'tomato 1px solid',
       'text-align': 'center',
     });
 
