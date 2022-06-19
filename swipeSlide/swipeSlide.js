@@ -17,20 +17,27 @@ function Swipe(Container, itemLength) {
   };
   const handleEnd = (x) => {
     if (isSwipe) {
+      const viewport = window.innerWidth > 500 ? 720 : 360;
       const offset = initOffset - x;
       if (Math.abs(offset) >= 360 / 2) {
         if (offset > 0 && currentStep > 0) {
           currentStep--;
-          currentOffset = currentStep * 360;
+          currentOffset = currentStep * viewport;
         } else if (offset < 0 && currentStep < itemLength - 1) {
           currentStep++;
-          currentOffset = currentStep * 360;
+          currentOffset = currentStep * viewport;
         }
       }
       Container.style.transition = '400ms';
       Container.style.transform = `translateX(-${currentOffset}px)`;
       isSwipe = false;
     }
+  };
+  const handleResize = () => {
+    const viewport = window.innerWidth > 500 ? 720 : 360;
+    currentOffset = currentStep * viewport;
+    Container.style.transition = '0';
+    Container.style.transform = `translateX(-${currentOffset}px)`;
   };
   return {
     desktopStart: (e) => {
@@ -51,6 +58,9 @@ function Swipe(Container, itemLength) {
     mobileEnd: (e) => {
       handleEnd(e.changedTouches[0].pageX);
     },
+    resize: (e) => {
+      handleResize();
+    },
   };
 }
 
@@ -58,7 +68,8 @@ function SlideComponent() {
   const SlideWrap = () => {
     const Node = document.createElement('article');
     setStyle(Node, {
-      width: '360px',
+      'max-width': '720px',
+      'min-width': '360px',
       margin: '0 auto',
       overflow: 'hidden',
       border: '1px solid',
@@ -75,6 +86,16 @@ function SlideComponent() {
       padding: 0,
       'list-style': 'none',
     });
+    const Style = document.createElement('style');
+    setGlobalStyle(`@media screen and (min-width: 500px) {
+      ul {
+        width: ${itemLength * 720}px !important;
+      }
+      li {
+        width: 720px !important;
+      }
+    }`);
+    document.querySelector('head').appendChild(Style);
 
     return Node;
   };
@@ -101,5 +122,10 @@ function SlideComponent() {
     for (const [key, value] of Object.entries(style)) {
       node.style[key] = value;
     }
+  }
+  function setGlobalStyle(style) {
+    const Style = document.createElement('style');
+    Style.innerHTML = style;
+    document.querySelector('head').appendChild(Style);
   }
 }

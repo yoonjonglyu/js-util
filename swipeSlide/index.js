@@ -17,14 +17,18 @@ function Main() {
 
   function addEvents(Wrap, Container, items) {
     const SwipeEvents = new Swipe(Container, items.length);
+    
     Wrap.addEventListener('touchstart', SwipeEvents.mobileStart);
     Wrap.addEventListener('touchmove', SwipeEvents.mobileMove);
     Wrap.addEventListener('touchend', SwipeEvents.mobileEnd);
     Wrap.addEventListener('touchcancel', SwipeEvents.mobileEnd);
+
     Wrap.addEventListener('pointerdown', SwipeEvents.desktopStart);
     Wrap.addEventListener('pointermove', SwipeEvents.desktopMove);
     Wrap.addEventListener('pointerup', SwipeEvents.desktopEnd);
     Wrap.addEventListener('pointerleave', SwipeEvents.desktopEnd);
+
+    window.addEventListener('resize', SwipeEvents.resize);
   }
 }
 
