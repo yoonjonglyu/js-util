@@ -1,9 +1,12 @@
-function Swipe(Container, itemLength) {
+function SwipeSlide(Container, itemLength) {
   let isSwipe = false;
   let initOffset = 0;
   let currentStep = 0;
   let currentOffset = 0;
 
+  /**
+   * @description 스와이프 기능(플립액션)과 리사이즈 관련 된 로직들
+   */
   const handleStart = (x) => {
     isSwipe = true;
     initOffset = x;
@@ -39,6 +42,21 @@ function Swipe(Container, itemLength) {
     Container.style.transition = '0';
     Container.style.transform = `translateX(-${currentOffset}px)`;
   };
+  /**
+   * @description 간단한 자동 슬라이드 기능
+   */
+  const handleSlide = (time) => {
+    return setInterval(() => {
+      currentStep < itemLength - 1 ? currentStep++ : (currentStep = 0);
+
+      const viewport = window.innerWidth > 500 ? 720 : 360;
+      currentOffset = currentStep * viewport;
+      Container.style.transition = '500ms';
+      Container.style.transform = `translateX(-${currentOffset}px)`;
+
+    }, time);
+  };
+
   return {
     desktopStart: (e) => {
       handleStart(e.pageX);
@@ -60,6 +78,9 @@ function Swipe(Container, itemLength) {
     },
     resize: (e) => {
       handleResize();
+    },
+    slide: (time) => {
+      handleSlide(time);
     },
   };
 }
