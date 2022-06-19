@@ -91,8 +91,7 @@ function SlideComponent() {
   const SlideWrap = () => {
     const Node = document.createElement('article');
     setStyle(Node, {
-      'max-width': '720px',
-      'min-width': '360px',
+      'width': '360px',
       margin: '0 auto',
       overflow: 'hidden',
       border: '1px solid',
@@ -111,6 +110,9 @@ function SlideComponent() {
     });
     const Style = document.createElement('style');
     setGlobalStyle(`@media screen and (min-width: 500px) {
+      article {
+        width: 720px !important;
+      }
       ul {
         width: ${itemLength * 720}px !important;
       }
