@@ -40,7 +40,7 @@ function Swipe(Container, itemLength) {
       handleMove(e.pageX);
     },
     desktopEnd: (e) => {
-      handleEnd(e.pageX);
+      if (!/iPhone|iPad|Android/g.test(navigator.userAgent)) handleEnd(e.pageX);
     },
     mobileStart: (e) => {
       handleStart(e.touches[0].pageX);
