@@ -17,7 +17,7 @@ function Main() {
 
   function addEvents(Wrap, Container, items) {
     const SwipeEvents = new SwipeSlide(Container, items.length);
-    SwipeEvents.slide(3000);
+    //SwipeEvents.slide(3000);
 
     Wrap.addEventListener('touchstart', SwipeEvents.mobileStart);
     Wrap.addEventListener('touchmove', SwipeEvents.mobileMove);
