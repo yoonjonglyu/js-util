@@ -19,6 +19,8 @@ then, catch, finally 메서드를 간단히 구현했고, 해당 페이지에서
 9. [Store](https://yoonjonglyu.github.io/js-util/store/) : 상태관리 전역 스토어를 간단하게 구현 해본 내용 옵저버 패턴을 참고 해서 구현했다. react 의 useSelector, dispatch, useState 훅 인터페이스를 모방했다. v-dom방식이 아니다보니 watch(구독)을 수동으로 또 중복 실행에 대한 처리를 수동으로 처리해야한다는게 단점. 추후 개선방안이 나오면 수정할 예정이다.  
 10. [SwipeSlide](https://yoonjonglyu.github.io/js-util/swipeSlide/) : 스와이프 기능과 슬라이드 기능을 간단하게 구현 해본 내용이다.
 데스크탑과 모바일에서의 스와이프 액션과 반응형에 따른 리사이즈 이벤트 그리고 플립액션 + 간단한 자동 슬라이드 기능.
+11. [logger](https://yoonjonglyu.github.io/js-util/logger/) : 프론트엔드 로그 기능에 대한 고민 간단한 시도.  
+
   
 ## LICENSE
 - MIT
